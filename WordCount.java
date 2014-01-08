@@ -56,7 +56,7 @@ public class WordCount extends Configured implements Tool {
       public void map(LongWritable key, Text value, Context context)
               throws IOException, InterruptedException {
          for (String token: value.toString().split("\\s+")) {
-            word.set(token);
+            word.set(token.toLowerCase());
             context.write(word, ONE);
          }
       }
