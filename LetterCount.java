@@ -29,7 +29,7 @@ public class LetterCount extends Configured implements Tool {
    @Override
    public int run(String[] args) throws Exception {
       System.out.println(Arrays.toString(args));
-      Job job = new Job(getConf(), "WordCount");
+      Job job = new Job(getConf(), "LetterCount");
       job.setJarByClass(WordCount.class);
       job.setOutputKeyClass(Text.class);
       job.setOutputValueClass(IntWritable.class);
