@@ -56,7 +56,7 @@ public class LetterCount extends Configured implements Tool {
       public void map(LongWritable key, Text value, Context context)
               throws IOException, InterruptedException {
          for (String token: value.toString().split("\\s+")) {
-            if(token.charAt(0).isLetter()) {
+            if(Character.isLetter(token.charAt(0))) {
                word.set(token.substring(0,0).toLowerCase());
                context.write(word, ONE);
             }
