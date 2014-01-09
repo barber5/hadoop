@@ -18,7 +18,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-public class WordCount extends Configured implements Tool {
+public class LetterCount extends Configured implements Tool {
    public static void main(String[] args) throws Exception {
       System.out.println(Arrays.toString(args));
       int res = ToolRunner.run(new Configuration(), new WordCount(), args);
@@ -56,8 +56,10 @@ public class WordCount extends Configured implements Tool {
       public void map(LongWritable key, Text value, Context context)
               throws IOException, InterruptedException {
          for (String token: value.toString().split("\\s+")) {
-            word.set(token);
-            context.write(word, ONE);
+            if(token.charAt(0).isLetter()) {
+               word.set(token.substring(0,0).toLowerCase());
+               context.write(word, ONE);
+            }
          }
       }
    }
