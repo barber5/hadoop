@@ -57,7 +57,7 @@ public class LetterCount extends Configured implements Tool {
               throws IOException, InterruptedException {
          for (String token: value.toString().split("\\s+")) {
             if(Character.isLetter(token.charAt(0))) {
-               String letter = "" + token.charAt(0)
+               String letter = "" + token.charAt(0);
                word.set(letter.toLowerCase());
                context.write(word, ONE);
             }
