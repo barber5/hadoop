@@ -49,6 +49,8 @@ public class FriendRec extends Configured implements Tool {
       FileInputFormat.addInputPath(job, new Path(args[0]));
       FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
+      System.out.println("lovely lovely config");
+
       job.waitForCompletion(true);
       
       return 0;
