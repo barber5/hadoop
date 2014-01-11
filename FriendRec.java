@@ -77,7 +77,7 @@ public class FriendRec extends Configured implements Tool {
       }
    }
 
-   public class FriendCount {
+   public static class FriendCount {
       public int friendId;
       public int count;
       public FriendCount(int friendId) {
@@ -86,7 +86,7 @@ public class FriendRec extends Configured implements Tool {
       }
    }
 
-   public class FriendComp implements Comparator<FriendCount> {
+   public static class FriendComp implements Comparator<FriendCount> {
       @Override
       public int compare(FriendCount f1, FriendCount f2) {
          return f1.count - f2.count;
