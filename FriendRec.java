@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.Comparator;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.TupleWritable;
+import org.apache.hadoop.mapreduce.lib.join.TupleWritable;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -58,8 +59,8 @@ public class FriendRec extends Configured implements Tool {
       @Override
       public void map(LongWritable key, Text value, Context context)
               throws IOException, InterruptedException {
-         int user = Integer.parseInt(value.toString().split('\t')[0]);
-         String[] friendsStr = value.toString().split('\t')[1].split(' ');
+         int user = Integer.parseInt(value.toString().split("\t")[0]);
+         String[] friendsStr = value.toString().split('\t')[1].split(" ");
          for(String friendiStr: friendsStr) {
             IntWritable friendi = new IntWritable(Integer.parseInt(friendiStr));
             for(String friendjStr: friendsStr) {
@@ -76,8 +77,8 @@ public class FriendRec extends Configured implements Tool {
    }
 
    public class FriendCount {
-      public int friendId;
-      public int count;
+      public static int friendId;
+      public static int count;
       public FriendCount(int friendId) {
          this.friendId = friendId;
          this.count = 0;
@@ -100,7 +101,7 @@ public class FriendRec extends Configured implements Tool {
          for(TupleWritable tw: values) { // count our mutual friends
             int candidate = tw.get(0).get();
             if(tw.get(1).get() < 0) {
-               ignoreList.put(candidate, True);
+               ignoreList.put(candidate, true);
                counts.remove(candidate);
             }
             if(ignoreList.containsKey(candidate)) { // already a friend
