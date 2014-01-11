@@ -123,7 +123,7 @@ public class FriendRec extends Configured implements Tool {
             FriendCount friendSuggestion = pq.poll();
             if(friendSuggestion == null)
                break;
-            vals.add(new IntWritable(friendSuggestion.friendId))
+            vals.add(new IntWritable(friendSuggestion.friendId));
             i++;
          }
          context.write(key, vals);
