@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.Iterable;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import org.apache.hadoop.conf.Configuration;
@@ -57,13 +58,13 @@ public class FriendRec extends Configured implements Tool {
    }
    
    public static class Map extends Mapper<LongWritable, Text, IntWritable, TupleWritable> {
-      private final static IntWritable ONE = new IntWritable(1);
-      private Text word = new Text();
+      private final static IntWritable ONE = new IntWritable(1);      
       @Override
       public void map(LongWritable key, Text value, Context context)
               throws IOException, InterruptedException {
          System.out.println("hello fuckface");
-         System.out.println(value.toString());
+         //System.out.println(value.toString());
+         /*
          int user = Integer.parseInt(value.toString().split("\t")[0]);
          String[] friendsStr = value.toString().split("\t")[1].split(",");
          for(String friendiStr: friendsStr) {
@@ -77,7 +78,7 @@ public class FriendRec extends Configured implements Tool {
                
                context.write(friendi, new TupleWritable(val));
             }
-         }
+         } */
       }
    }
 
