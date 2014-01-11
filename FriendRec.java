@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.Comparator;
+import java.util.PriorityQueue;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -70,7 +71,7 @@ public class FriendRec extends Configured implements Tool {
                
                Writable[] val = {friendj, ONE};
                
-               context.write(friendi, val);
+               context.write(friendi, new TupleWritable(val));
             }
          }
       }
@@ -112,9 +113,9 @@ public class FriendRec extends Configured implements Tool {
             }
             
             if(!counts.containsKey(candidate)) {
-               counts.put(candidate, 0);
+               counts.put(candidate, new FriendCount(candidate));
             }
-            counts.put(candidate, counts.get(candidate) + 1);
+            counts.get(candidate).count += 1;
          }
          PriorityQueue<FriendCount> pq = new PriorityQueue<FriendCount>(counts.size(), new FriendComp());
          for(Integer candidate: counts.keySet()) {
