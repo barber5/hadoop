@@ -60,6 +60,7 @@ public class FriendRec extends Configured implements Tool {
       @Override
       public void map(LongWritable key, Text value, Context context)
               throws IOException, InterruptedException {
+         System.out.println(value.toString());
          int user = Integer.parseInt(value.toString().split("\t")[0]);
          String[] friendsStr = value.toString().split("\t")[1].split(",");
          for(String friendiStr: friendsStr) {
