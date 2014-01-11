@@ -38,7 +38,7 @@ public class FriendRec extends Configured implements Tool {
       Job job = new Job(getConf(), "FriendRec");
       job.setJarByClass(FriendRec.class);
       job.setOutputKeyClass(IntWritable.class);
-      job.setOutputValueClass(Iterable<IntWritable>.class);
+      job.setOutputValueClass(Iterable.class);
 
       job.setMapperClass(Map.class);
       job.setReducerClass(Reduce.class);
