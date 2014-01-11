@@ -60,7 +60,7 @@ public class FriendRec extends Configured implements Tool {
       public void map(LongWritable key, Text value, Context context)
               throws IOException, InterruptedException {
          int user = Integer.parseInt(value.toString().split("\t")[0]);
-         String[] friendsStr = value.toString().split('\t')[1].split(" ");
+         String[] friendsStr = value.toString().split("\t")[1].split(" ");
          for(String friendiStr: friendsStr) {
             IntWritable friendi = new IntWritable(Integer.parseInt(friendiStr));
             for(String friendjStr: friendsStr) {
@@ -77,8 +77,8 @@ public class FriendRec extends Configured implements Tool {
    }
 
    public class FriendCount {
-      public static int friendId;
-      public static int count;
+      public int friendId;
+      public int count;
       public FriendCount(int friendId) {
          this.friendId = friendId;
          this.count = 0;
@@ -99,8 +99,11 @@ public class FriendRec extends Configured implements Tool {
          HashMap<Integer, FriendCount> counts = new HashMap<Integer, FriendCount>();
          HashMap<Integer, Boolean> ignoreList = new HashMap<Integer, Boolean>(); // I hate java
          for(TupleWritable tw: values) { // count our mutual friends
-            int candidate = tw.get(0).get();
-            if(tw.get(1).get() < 0) {
+            IntWritable candWrite = (IntWritable) tw.get(0);
+            IntWritable candCount = (IntWritable) tw.get(1);
+            int candidate = candWrite.get();
+            int cnt = candCount.get();
+            if(cnt < 0) {
                ignoreList.put(candidate, true);
                counts.remove(candidate);
             }
