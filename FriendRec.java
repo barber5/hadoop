@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
-import java.util.Iterable;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import org.apache.hadoop.conf.Configuration;
