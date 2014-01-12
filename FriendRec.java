@@ -103,10 +103,9 @@ public class FriendRec extends Configured implements Tool {
               throws IOException, InterruptedException {
          HashMap<Integer, FriendCount> counts = new HashMap<Integer, FriendCount>();
          HashMap<Integer, Boolean> ignoreList = new HashMap<Integer, Boolean>(); // I hate java
-         for(Iterable<IntWritable> tw: values) { // count our mutual friends
-            IntWritable[] vec = (IntWritable[]) tw;
-            IntWritable candWrite =  vec[0];
-            IntWritable candCount =  vec[1];
+         for(IntWritable[] tw: values) { // count our mutual friends            
+            IntWritable candWrite =  tw[0];
+            IntWritable candCount =  tw[1];
             int candidate = candWrite.get();
             int cnt = candCount.get();
             if(cnt < 0) {
