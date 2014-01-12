@@ -64,7 +64,7 @@ public class FriendRec extends Configured implements Tool {
               throws IOException, InterruptedException {
          System.out.println("hello fuckface");
          //System.out.println(value.toString());
-         
+         /*
          int user = Integer.parseInt(value.toString().split("\t")[0]);
          String[] friendsStr = value.toString().split("\t")[1].split(",");
          for(String friendiStr: friendsStr) {
@@ -78,7 +78,7 @@ public class FriendRec extends Configured implements Tool {
                val.add(ONE);
                context.write(friendi, val);
             }
-         } 
+         }  */
       }
    }
 
