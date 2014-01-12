@@ -2,6 +2,7 @@ package co.brbr5.app;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Vector;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -64,13 +65,14 @@ public class FriendRec extends Configured implements Tool {
       }
    }
 
-   public static class Reduce extends Reducer<IntWritable, Iterable<IntWritable>, IntWritable, IntWritable> {
+   public static class Reduce extends Reducer<IntWritable, Iterable<IntWritable>, IntWritable, Iterable<IntWritable> >{
       @Override
       public void reduce(IntWritable key, Iterable<Iterable<IntWritable> > values, Context context)
               throws IOException, InterruptedException {
          int sum = 0;
-         
-         context.write(key, new IntWritable(sum));
+         Vector<IntWritable> vec = new Vector<IntWritable>();
+         vec.add(sum);
+         context.write(key, vec);
       }
    }
 }
