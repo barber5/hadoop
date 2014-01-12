@@ -4,13 +4,16 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -40,15 +43,44 @@ public class FriendRec extends Configured implements Tool {
         job.setMapperClass(Map.class);
         job.setReducerClass(Reduce.class);
 
-        job.setInputFormatClass(TextInputFormat.class);
+        job.setInputFormatClass(TextInputFormat.class); // breaks into lines
         job.setOutputFormatClass(TextOutputFormat.class);
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
+        System.out.println("lovely lovely config");
+
         job.waitForCompletion(true);
 
         return 0;
+    }
+
+    public static class Map extends Mapper<LongWritable, Text, IntWritable, IntArrayWritable > {
+        private final static IntWritable ONE = new IntWritable(1);
+        private Text word = new Text();
+        @Override
+        public void map(LongWritable key, Text value, Context context)
+                throws IOException, InterruptedException {
+            int user = Integer.parseInt(value.toString().split("\t")[0]);
+            String[] friendsStr = value.toString().split("\t")[1].split(",");
+            for(String friendiStr: friendsStr) {
+                IntWritable friendi = new IntWritable(Integer.parseInt(friendiStr));
+                int[] friend = {friendi.get(), -1};
+                IntArrayWritable friendVal = new IntArrayWritable();
+                friendVal.set(friend);
+                context.write(new IntWritable(user), friendVal);
+                for(String friendjStr: friendsStr) {
+                    if(friendiStr.equals(friendjStr))
+                        continue;
+                    IntWritable friendj = new IntWritable(Integer.parseInt(friendjStr));
+                    int[] arr = {friendj.get(), 1};
+                    IntArrayWritable val = new IntArrayWritable();
+                    val.set(arr);
+                    context.write(friendi, val);
+                }
+            }
+        }
     }
     public static class IntArrayWritable implements Writable {
         private int[] data;
@@ -79,31 +111,62 @@ public class FriendRec extends Configured implements Tool {
         }
     }
 
-    public static class Map extends Mapper<LongWritable, Text, IntWritable, IntArrayWritable > {
-        private final static IntWritable ONE = new IntWritable(1);
-        private Text word = new Text();
-
-        @Override
-        public void map(LongWritable key, Text value, Context context)
-                throws IOException, InterruptedException {
-            for (String token: value.toString().split("\\s+")) {
-                word.set(token);
-                int[] arr = {1};
-                IntArrayWritable vec = new IntArrayWritable();
-                vec.set(arr);
-                context.write(ONE, vec);
-            }
+    public static class FriendCount {
+        public int friendId;
+        public int count;
+        public FriendCount(int friendId) {
+            this.friendId = friendId;
+            this.count = 0;
         }
     }
 
-    public static class Reduce extends Reducer<IntWritable, IntArrayWritable, IntWritable, IntArrayWritable >{
+    public static class FriendComp implements Comparator<FriendCount> {
+        @Override
+        public int compare(FriendCount f1, FriendCount f2) {
+            return f1.count - f2.count;
+        }
+    }
+
+    public static class Reduce extends Reducer<IntWritable, IntArrayWritable , IntWritable, IntArrayWritable > {
         @Override
         public void reduce(IntWritable key, Iterable<IntArrayWritable> values, Context context)
                 throws IOException, InterruptedException {
-            int[] arr = {0};
-            IntArrayWritable vec = new IntArrayWritable();
-            vec.set(arr);
-            context.write(key, vec);
+            HashMap<Integer, FriendCount> counts = new HashMap<Integer, FriendCount>();
+            HashMap<Integer, Boolean> ignoreList = new HashMap<Integer, Boolean>(); // I hate java
+            for(IntArrayWritable tw: values) { // count our mutual friends
+                int[] data = tw.getData();
+                int candidate =  data[0];
+                int cnt =  data[1];
+                if(cnt < 0) {
+                    ignoreList.put(candidate, true);
+                    counts.remove(candidate);
+                }
+                if(ignoreList.containsKey(candidate)) { // already a friend
+                    continue;
+                }
+
+                if(!counts.containsKey(candidate)) {
+                    counts.put(candidate, new FriendCount(candidate));
+                }
+                counts.get(candidate).count += 1;
+            }
+            PriorityQueue<FriendCount> pq = new PriorityQueue<FriendCount>(counts.size(), new FriendComp());
+            for(Integer candidate: counts.keySet()) {
+                pq.add(counts.get(candidate));
+            }
+
+            int i = 0;
+            int[] vals = new int[10];
+            while(i < 10) {
+                FriendCount friendSuggestion = pq.poll();
+                if(friendSuggestion == null)
+                    break;
+                vals[i] = friendSuggestion.friendId;
+                i++;
+            }
+            IntArrayWritable valsWritable = new IntArrayWritable();
+            valsWritable.set(vals);
+            context.write(key, valsWritable);
         }
     }
 }
