@@ -113,6 +113,18 @@ public class FriendRec extends Configured implements Tool {
                 data[i] = in.readInt();
             }
         }
+
+        public String toString() {
+            if(this.data.length == 0) {
+                return "[]";
+            }
+            String result = "[";
+            for(int i = 0; i < this.data.length - 1; i++) {
+                result += this.data[i] + ", ";
+            }
+            result += this.data[this.data.length - 1] + "]";
+            return result;
+        }
     }
 
     public static class FriendCount {
