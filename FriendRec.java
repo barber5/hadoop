@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.Comparator;
+import java.util.Collection;
 import java.util.PriorityQueue;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
