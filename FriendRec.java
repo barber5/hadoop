@@ -48,7 +48,7 @@ public class FriendRec extends Configured implements Tool {
       return 0;
    }
    
-   public static class Map extends Mapper<LongWritable, Text, IntWritable, IntWritable> {
+   public static class Map extends Mapper<LongWritable, Text, IntWritable, Iterable<IntWritable> > {
       private final static IntWritable ONE = new IntWritable(1);
       private Text word = new Text();
 
@@ -57,19 +57,19 @@ public class FriendRec extends Configured implements Tool {
               throws IOException, InterruptedException {
          for (String token: value.toString().split("\\s+")) {
             word.set(token);
-            context.write(ONE, ONE);
+            Vector<IntWritable> vec = new Vector<IntWritable>();
+            vec.add(ONE);
+            context.write(ONE, vec);
          }
       }
    }
 
-   public static class Reduce extends Reducer<IntWritable, IntWritable, IntWritable, IntWritable> {
+   public static class Reduce extends Reducer<IntWritable, Iterable<IntWritable>, IntWritable, IntWritable> {
       @Override
-      public void reduce(IntWritable key, Iterable<IntWritable> values, Context context)
+      public void reduce(IntWritable key, Iterable<Iterable<IntWritable> > values, Context context)
               throws IOException, InterruptedException {
          int sum = 0;
-         for (IntWritable val : values) {
-            sum += val.get();
-         }
+         
          context.write(key, new IntWritable(sum));
       }
    }
