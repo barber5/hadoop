@@ -59,8 +59,9 @@ public class FriendRec extends Configured implements Tool {
               throws IOException, InterruptedException {
          for (String token: value.toString().split("\\s+")) {
             word.set(token);
+            IntWritable[] arr = {ONE};
             ArrayWritable vec = new ArrayWritable(IntWritable.class);
-            vec.add(ONE);
+            vec.set(arr);
             context.write(ONE, vec);
          }
       }
@@ -71,7 +72,8 @@ public class FriendRec extends Configured implements Tool {
       public void reduce(IntWritable key, Iterable<ArrayWritable> values, Context context)
               throws IOException, InterruptedException {
          ArrayWritable vec = new ArrayWritable(IntWritable.class);
-         vec.add(new IntWritable(0));
+         IntWritable[] arr = {new IntWritable(0)};
+         vec.set(arr);
          context.write(key, vec);
       }
    }
