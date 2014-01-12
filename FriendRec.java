@@ -135,7 +135,7 @@ public class FriendRec extends Configured implements Tool {
             vals.add(new IntWritable(friendSuggestion.friendId));
             i++;
          }
-         context.write(key, vals.toArray());
+         context.write(key, (IntWritable[]) vals.toArray());
       }
    }
 }
