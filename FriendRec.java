@@ -38,7 +38,7 @@ public class FriendRec extends Configured implements Tool {
       Job job = new Job(getConf(), "FriendRec");
       job.setJarByClass(FriendRec.class);
       job.setOutputKeyClass(IntWritable.class);
-      job.setOutputValueClass(Iterable.class);
+      job.setOutputValueClass(Collection.class);
 
       job.setMapperClass(Map.class);
       job.setReducerClass(Reduce.class);
@@ -56,7 +56,7 @@ public class FriendRec extends Configured implements Tool {
       return 0;
    }
    
-   public static class Map extends Mapper<LongWritable, Text, IntWritable, Iterable<IntWritable> > {
+   public static class Map extends Mapper<LongWritable, Text, IntWritable, Collection<IntWritable> > {
       private final static IntWritable ONE = new IntWritable(1);      
       @Override
       public void map(LongWritable key, Text value, Context context)
@@ -97,9 +97,9 @@ public class FriendRec extends Configured implements Tool {
       }
    }
 
-   public static class Reduce extends Reducer<IntWritable, Iterable<Iterable<IntWritable> >, IntWritable, Iterable<IntWritable> > {
+   public static class Reduce extends Reducer<IntWritable, Collection<IntWritable> , IntWritable, Collection<IntWritable> > {
       @Override
-      public void reduce(IntWritable key, Iterable<Iterable<IntWritable>> values, Context context)
+      public void reduce(IntWritable key, Iterable<Collection<IntWritable>> values, Context context)
               throws IOException, InterruptedException {
          HashMap<Integer, FriendCount> counts = new HashMap<Integer, FriendCount>();
          HashMap<Integer, Boolean> ignoreList = new HashMap<Integer, Boolean>(); // I hate java
