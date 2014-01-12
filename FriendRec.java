@@ -51,7 +51,7 @@ public class FriendRec extends Configured implements Tool {
    public class IntArrayWritable implements Writable {
       private int[] data;
       public IntArrayWritable() {
-         this.data = new int[]();
+         this.data = new int[0];
       }
       public void set(int[] data) {
          this.data = data;
