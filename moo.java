@@ -39,7 +39,7 @@ public class FriendRec extends Configured implements Tool {
       Job job = new Job(getConf(), "FriendRec");
       job.setJarByClass(FriendRec.class);
       job.setOutputKeyClass(IntWritable.class);
-      job.setOutputValueClass(Iterable.class);
+      job.setOutputValueClass(IntWritable[].class);
 
       job.setMapperClass(Map.class);
       job.setReducerClass(Reduce.class);
@@ -57,7 +57,7 @@ public class FriendRec extends Configured implements Tool {
       return 0;
    }
    
-   public static class Map extends Mapper<LongWritable, Text, IntWritable, Iterable<IntWritable> > {
+   public static class Map extends Mapper<LongWritable, Text, IntWritable, IntWritable[] > {
       private final static IntWritable ONE = new IntWritable(1);  
       private Text word = new Text();    
       @Override
@@ -73,10 +73,8 @@ public class FriendRec extends Configured implements Tool {
             for(String friendjStr: friendsStr) {
                if(friendiStr.equals(friendjStr))
                   continue;
-               IntWritable friendj = new IntWritable(Integer.parseInt(friendjStr));                              
-               Vector<IntWritable> val = new Vector<IntWritable>();
-               val.add(friendj);
-               val.add(ONE);
+               IntWritable friendj = new IntWritable(Integer.parseInt(friendjStr));
+               IntWritable[] val = {friendj, ONE};                                             
                context.write(friendi, val);
             }
          }  
@@ -99,16 +97,15 @@ public class FriendRec extends Configured implements Tool {
       }
    }
 
-   public static class Reduce extends Reducer<IntWritable, Iterable<IntWritable> , IntWritable, Iterable<IntWritable> > {
+   public static class Reduce extends Reducer<IntWritable, IntWritable[] , IntWritable, IntWritable[] > {
       @Override
-      public void reduce(IntWritable key, Iterable<Collection<IntWritable>> values, Context context)
+      public void reduce(IntWritable key, Iterable<IntWritable[]> values, Context context)
               throws IOException, InterruptedException {
          HashMap<Integer, FriendCount> counts = new HashMap<Integer, FriendCount>();
          HashMap<Integer, Boolean> ignoreList = new HashMap<Integer, Boolean>(); // I hate java
-         for(Iterable<IntWritable> tw: values) { // count our mutual friends
-            Vector<IntWritable> vec = (Vector<IntWritable>) tw;
-            IntWritable candWrite = (IntWritable) vec.get(0);
-            IntWritable candCount = (IntWritable) vec.get(1);
+         for(IntWritable[] tw: values) { // count our mutual friends            
+            IntWritable candWrite =  tw[0];
+            IntWritable candCount =  tw[1];
             int candidate = candWrite.get();
             int cnt = candCount.get();
             if(cnt < 0) {
@@ -138,7 +135,7 @@ public class FriendRec extends Configured implements Tool {
             vals.add(new IntWritable(friendSuggestion.friendId));
             i++;
          }
-         context.write(key, vals);
+         context.write(key, (IntWritable[]) vals.toArray());
       }
    }
 }
