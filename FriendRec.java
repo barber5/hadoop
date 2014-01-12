@@ -33,7 +33,7 @@ public class FriendRec extends Configured implements Tool {
       Job job = new Job(getConf(), "FriendRec");
       job.setJarByClass(FriendRec.class);
       job.setOutputKeyClass(IntWritable.class);
-      job.setOutputValueClass(Iterable.class);
+      job.setOutputValueClass(IntWritable[].class);
 
       job.setMapperClass(Map.class);
       job.setReducerClass(Reduce.class);
@@ -49,7 +49,7 @@ public class FriendRec extends Configured implements Tool {
       return 0;
    }
    
-   public static class Map extends Mapper<LongWritable, Text, IntWritable, Iterable<IntWritable> > {
+   public static class Map extends Mapper<LongWritable, Text, IntWritable, IntWritable[] > {
       private final static IntWritable ONE = new IntWritable(1);
       private Text word = new Text();
 
@@ -65,7 +65,7 @@ public class FriendRec extends Configured implements Tool {
       }
    }
 
-   public static class Reduce extends Reducer<IntWritable, Iterable<IntWritable>, IntWritable, Iterable<IntWritable> >{
+   public static class Reduce extends Reducer<IntWritable, IntWritable[], IntWritable, IntWritable[] >{
       @Override
       public void reduce(IntWritable key, Iterable<Iterable<IntWritable> > values, Context context)
               throws IOException, InterruptedException {
