@@ -56,7 +56,7 @@ public class FriendRec extends Configured implements Tool {
       return 0;
    }
    
-   public static class Map extends Mapper<LongWritable, Text, IntWritable, TupleWritable> {
+   public static class Map extends Mapper<LongWritable, Text, IntWritable, Iterable<IntWritable> > {
       private final static IntWritable ONE = new IntWritable(1);      
       @Override
       public void map(LongWritable key, Text value, Context context)
