@@ -75,7 +75,7 @@ public class FriendRec extends Configured implements Tool {
                
                IntWritable[] val = {friendj, ONE};
                
-               context.write(friendi, val);
+               context.write(friendi, new Vector<IntWritable>(val));
             }
          } 
       }
