@@ -35,8 +35,8 @@ public class FriendCounter extends Configured implements Tool {
         System.out.println(Arrays.toString(args));
         Job job = new Job(getConf(), "FriendCounter");
         job.setJarByClass(FriendCounter.class);
-        job.setOutputKeyClass(IntWritable.class);
-        job.setOutputValueClass(IntArrayWritable.class);
+        job.setOutputKeyClass(IntArrayWritable.class);
+        job.setOutputValueClass(IntWritable.class);
 
         job.setMapperClass(Map.class);
         job.setReducerClass(Reduce.class);
