@@ -1,4 +1,4 @@
-package co.brbr5.app
+package co.brbr5.app;
 
 import java.io.DataInput;
 import java.io.DataOutput;
