@@ -2,12 +2,18 @@ package co.brbr5.app;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Vector;
+import java.util.Comparator;
+import java.util.Collection;
+import java.util.PriorityQueue;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.mapred.join.TupleWritable;
+import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -38,11 +44,13 @@ public class FriendRec extends Configured implements Tool {
       job.setMapperClass(Map.class);
       job.setReducerClass(Reduce.class);
 
-      job.setInputFormatClass(TextInputFormat.class);
+      job.setInputFormatClass(TextInputFormat.class); // breaks into lines
       job.setOutputFormatClass(TextOutputFormat.class);
 
       FileInputFormat.addInputPath(job, new Path(args[0]));
       FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+      System.out.println("lovely lovely config");
 
       job.waitForCompletion(true);
       
@@ -50,27 +58,85 @@ public class FriendRec extends Configured implements Tool {
    }
    
    public static class Map extends Mapper<LongWritable, Text, IntWritable, IntWritable[] > {
-      private final static IntWritable ONE = new IntWritable(1);
-      private Text word = new Text();
-
+      private final static IntWritable ONE = new IntWritable(1);  
+      private Text word = new Text();    
       @Override
       public void map(LongWritable key, Text value, Context context)
               throws IOException, InterruptedException {
-         for (String token: value.toString().split("\\s+")) {
-            word.set(token);
-            IntWritable[] vec = {ONE};
-            context.write(ONE, vec);
-         }
+         System.out.println("hello fuckface");
+         //System.out.println(value.toString());
+         
+         int user = Integer.parseInt(value.toString().split("\t")[0]);
+         String[] friendsStr = value.toString().split("\t")[1].split(",");
+         for(String friendiStr: friendsStr) {
+            IntWritable friendi = new IntWritable(Integer.parseInt(friendiStr));
+            for(String friendjStr: friendsStr) {
+               if(friendiStr.equals(friendjStr))
+                  continue;
+               IntWritable friendj = new IntWritable(Integer.parseInt(friendjStr));
+               IntWritable[] val = {friendj, ONE};                                             
+               context.write(friendi, val);
+            }
+         }  
       }
    }
 
-   public static class Reduce extends Reducer<IntWritable, IntWritable[], IntWritable, IntWritable[] >{
+   public static class FriendCount {
+      public int friendId;
+      public int count;
+      public FriendCount(int friendId) {
+         this.friendId = friendId;
+         this.count = 0;
+      }
+   }
+
+   public static class FriendComp implements Comparator<FriendCount> {
+      @Override
+      public int compare(FriendCount f1, FriendCount f2) {
+         return f1.count - f2.count;
+      }
+   }
+
+   public static class Reduce extends Reducer<IntWritable, IntWritable[] , IntWritable, IntWritable[] > {
       @Override
       public void reduce(IntWritable key, Iterable<IntWritable[]> values, Context context)
               throws IOException, InterruptedException {
-         int sum = 0;
-         IntWritable[] vec = {new IntWritable(sum)};         
-         context.write(key, vec);
+         HashMap<Integer, FriendCount> counts = new HashMap<Integer, FriendCount>();
+         HashMap<Integer, Boolean> ignoreList = new HashMap<Integer, Boolean>(); // I hate java
+         for(Iterable<IntWritable> tw: values) { // count our mutual friends
+            IntWritable[] vec = (IntWritable[]) tw;
+            IntWritable candWrite =  vec[0];
+            IntWritable candCount =  vec[1];
+            int candidate = candWrite.get();
+            int cnt = candCount.get();
+            if(cnt < 0) {
+               ignoreList.put(candidate, true);
+               counts.remove(candidate);
+            }
+            if(ignoreList.containsKey(candidate)) { // already a friend
+               continue;
+            }
+            
+            if(!counts.containsKey(candidate)) {
+               counts.put(candidate, new FriendCount(candidate));
+            }
+            counts.get(candidate).count += 1;
+         }
+         PriorityQueue<FriendCount> pq = new PriorityQueue<FriendCount>(counts.size(), new FriendComp());
+         for(Integer candidate: counts.keySet()) {
+            pq.add(counts.get(candidate));
+         }
+
+         int i = 0;
+         Vector<IntWritable> vals = new Vector<IntWritable>();
+         while(i < 10) {
+            FriendCount friendSuggestion = pq.poll();
+            if(friendSuggestion == null)
+               break;
+            vals.add(new IntWritable(friendSuggestion.friendId));
+            i++;
+         }
+         context.write(key, vals.toArray());
       }
    }
 }
