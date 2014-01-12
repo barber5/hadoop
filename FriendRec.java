@@ -57,14 +57,14 @@ public class FriendRec extends Configured implements Tool {
               throws IOException, InterruptedException {
          for (String token: value.toString().split("\\s+")) {
             word.set(token);
-            context.write(word, ONE);
+            context.write(ONE, ONE);
          }
       }
    }
 
    public static class Reduce extends Reducer<IntWritable, IntWritable, IntWritable, IntWritable> {
       @Override
-      public void reduce(Text key, Iterable<IntWritable> values, Context context)
+      public void reduce(IntWritable key, Iterable<IntWritable> values, Context context)
               throws IOException, InterruptedException {
          int sum = 0;
          for (IntWritable val : values) {
