@@ -8,7 +8,6 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.ArrayWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -34,7 +33,7 @@ public class FriendRec extends Configured implements Tool {
       Job job = new Job(getConf(), "FriendRec");
       job.setJarByClass(FriendRec.class);
       job.setOutputKeyClass(IntWritable.class);
-      job.setOutputValueClass(ArrayWritable.class);
+      job.setOutputValueClass(IntArrayWritable.class);
 
       job.setMapperClass(Map.class);
       job.setReducerClass(Reduce.class);
@@ -49,8 +48,36 @@ public class FriendRec extends Configured implements Tool {
       
       return 0;
    }
+   public class IntArrayWritable implements Writable {
+      private int[] data;
+      public IntArrayWritable() {
+         this.data = new int[]()
+      }
+      public void set(int[] data) {
+         this.data = data;
+      }
+      public int[] getData() {
+         return this.data;
+      }
+      public void write(DataOutput out) throws IOException {                  
+         out.writeInt(data.length);
+         for(int i = 0; i < data.length; i++) {
+            out.writeInt(data[i]);
+         }
+      }
+
+      public void readFields(DataInput in) throws IOException {
+         int length = in.readInt();
+
+         data = new int[length];
+
+         for(int i = 0; i < length; i++) {
+            data[i] = in.readInt();
+         }
+      }
+   }
    
-   public static class Map extends Mapper<LongWritable, Text, IntWritable, ArrayWritable > {
+   public static class Map extends Mapper<LongWritable, Text, IntWritable, IntArrayWritable > {
       private final static IntWritable ONE = new IntWritable(1);
       private Text word = new Text();
 
@@ -60,19 +87,19 @@ public class FriendRec extends Configured implements Tool {
          for (String token: value.toString().split("\\s+")) {
             word.set(token);
             IntWritable[] arr = {ONE};
-            ArrayWritable vec = new ArrayWritable(IntWritable.class);
+            IntArrayWritable vec = new IntArrayWritable();            
             vec.set(arr);
             context.write(ONE, vec);
          }
       }
    }
 
-   public static class Reduce extends Reducer<IntWritable, ArrayWritable, IntWritable, ArrayWritable >{
+   public static class Reduce extends Reducer<IntWritable, IntArrayWritable, IntWritable, IntArrayWritable >{
       @Override
-      public void reduce(IntWritable key, Iterable<ArrayWritable> values, Context context)
-              throws IOException, InterruptedException {
-         ArrayWritable vec = new ArrayWritable(IntWritable.class);
+      public void reduce(IntWritable key, Iterable<IntArrayWritable> values, Context context)
+              throws IOException, InterruptedException {         
          IntWritable[] arr = {new IntWritable(0)};
+         IntArrayWritable vec = new IntArrayWritable();
          vec.set(arr);
          context.write(key, vec);
       }
