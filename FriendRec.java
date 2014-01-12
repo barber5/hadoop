@@ -58,8 +58,7 @@ public class FriendRec extends Configured implements Tool {
               throws IOException, InterruptedException {
          for (String token: value.toString().split("\\s+")) {
             word.set(token);
-            Vector<IntWritable> vec = new Vector<IntWritable>();
-            vec.add(ONE);
+            IntWritable[] vec = {ONE};
             context.write(ONE, vec);
          }
       }
@@ -70,8 +69,7 @@ public class FriendRec extends Configured implements Tool {
       public void reduce(IntWritable key, Iterable<Iterable<IntWritable> > values, Context context)
               throws IOException, InterruptedException {
          int sum = 0;
-         Vector<IntWritable> vec = new Vector<IntWritable>();
-         vec.add(new IntWritable(sum));
+         IntWritable[] vec = {ONE};         
          context.write(key, vec);
       }
    }
