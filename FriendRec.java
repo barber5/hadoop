@@ -71,11 +71,11 @@ public class FriendRec extends Configured implements Tool {
             for(String friendjStr: friendsStr) {
                if(friendiStr.equals(friendjStr))
                   continue;
-               IntWritable friendj = new IntWritable(Integer.parseInt(friendjStr));
-               
-               IntWritable[] val = {friendj, ONE};
-               
-               context.write(friendi, new Vector<IntWritable>(val));
+               IntWritable friendj = new IntWritable(Integer.parseInt(friendjStr));                              
+               Vector<IntWritable> val = new Vector<IntWritable>();
+               val.add(friendj);
+               val.add(ONE);
+               context.write(friendi, val);
             }
          } 
       }
