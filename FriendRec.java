@@ -66,10 +66,10 @@ public class FriendRec extends Configured implements Tool {
 
    public static class Reduce extends Reducer<IntWritable, IntWritable[], IntWritable, IntWritable[] >{
       @Override
-      public void reduce(IntWritable key, Iterable<Iterable<IntWritable> > values, Context context)
+      public void reduce(IntWritable key, Iterable<IntWritable[]> values, Context context)
               throws IOException, InterruptedException {
          int sum = 0;
-         IntWritable[] vec = {ONE};         
+         IntWritable[] vec = {new IntWritable(sum)};         
          context.write(key, vec);
       }
    }
