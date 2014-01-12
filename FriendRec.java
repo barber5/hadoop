@@ -33,7 +33,7 @@ public class FriendRec extends Configured implements Tool {
       Job job = new Job(getConf(), "FriendRec");
       job.setJarByClass(FriendRec.class);
       job.setOutputKeyClass(IntWritable.class);
-      job.setOutputValueClass(IntWritable[].class);
+      job.setOutputValueClass(ArrayWritable.class);
 
       job.setMapperClass(Map.class);
       job.setReducerClass(Reduce.class);
@@ -49,7 +49,7 @@ public class FriendRec extends Configured implements Tool {
       return 0;
    }
    
-   public static class Map extends Mapper<LongWritable, Text, IntWritable, IntWritable[] > {
+   public static class Map extends Mapper<LongWritable, Text, IntWritable, ArrayWritable > {
       private final static IntWritable ONE = new IntWritable(1);
       private Text word = new Text();
 
@@ -58,18 +58,19 @@ public class FriendRec extends Configured implements Tool {
               throws IOException, InterruptedException {
          for (String token: value.toString().split("\\s+")) {
             word.set(token);
-            IntWritable[] vec = {ONE};
+            ArrayWritable vec = new ArrayWritable(IntWritable.class);
+            vec.add(ONE);
             context.write(ONE, vec);
          }
       }
    }
 
-   public static class Reduce extends Reducer<IntWritable, IntWritable[], IntWritable, IntWritable[] >{
+   public static class Reduce extends Reducer<IntWritable, ArrayWritable, IntWritable, ArrayWritable >{
       @Override
-      public void reduce(IntWritable key, Iterable<IntWritable[]> values, Context context)
+      public void reduce(IntWritable key, Iterable<ArrayWritable> values, Context context)
               throws IOException, InterruptedException {
-         int sum = 0;
-         IntWritable[] vec = {new IntWritable(sum)};         
+         ArrayWritable vec = new ArrayWritable(IntWritable.class);
+         vec.add(new IntWritable(0));
          context.write(key, vec);
       }
    }
