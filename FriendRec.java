@@ -154,7 +154,8 @@ public class FriendRec extends Configured implements Tool {
                 }
                 counts.get(candidate).count += 1;
             }
-            PriorityQueue<FriendCount> pq = new PriorityQueue<FriendCount>(counts.size(), new FriendComp());
+
+            PriorityQueue<FriendCount> pq = new PriorityQueue<FriendCount>(new FriendComp());
             for(Integer candidate: counts.keySet()) {
                 pq.add(counts.get(candidate));
             }
