@@ -71,7 +71,7 @@ public class FriendRec extends Configured implements Tool {
               throws IOException, InterruptedException {
          int sum = 0;
          Vector<IntWritable> vec = new Vector<IntWritable>();
-         vec.add(sum);
+         vec.add(new IntWritable(sum));
          context.write(key, vec);
       }
    }
