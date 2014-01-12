@@ -97,9 +97,9 @@ public class FriendRec extends Configured implements Tool {
       }
    }
 
-   public static class Reduce extends Reducer<IntWritable, Iterable<IntWritable>, IntWritable, Iterable<IntWritable> > {
+   public static class Reduce extends Reducer<IntWritable, Iterable<Iterable<IntWritable> >, IntWritable, Iterable<IntWritable> > {
       @Override
-      public void reduce(IntWritable key, Iterable<TupleWritable> values, Context context)
+      public void reduce(IntWritable key, Iterable<Iterable<IntWritable>> values, Context context)
               throws IOException, InterruptedException {
          HashMap<Integer, FriendCount> counts = new HashMap<Integer, FriendCount>();
          HashMap<Integer, Boolean> ignoreList = new HashMap<Integer, Boolean>(); // I hate java
