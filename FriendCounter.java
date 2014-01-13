@@ -45,7 +45,7 @@ public class FriendCounter extends Configured implements Tool {
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
-
+        System.out.println("ahh fuck");
         job.waitForCompletion(true);
 
         return 0;
@@ -58,7 +58,7 @@ public class FriendCounter extends Configured implements Tool {
         public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
             String[] splitter = value.toString().split("\t");
-            if(splitter.length < 2) {
+            if(splitter.length < 100) {
                 return;
             }
             int user = Integer.parseInt(value.toString().split("\t")[0]);
