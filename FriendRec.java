@@ -49,16 +49,12 @@ public class FriendRec extends Configured implements Tool {
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
-        System.out.println("lovely lovely config");
-
         job.waitForCompletion(true);
 
         return 0;
     }
 
     public static class Map extends Mapper<LongWritable, Text, IntWritable, IntArrayWritable > {
-        private final static IntWritable ONE = new IntWritable(1);
-        private Text word = new Text();
         @Override
         public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
@@ -139,7 +135,7 @@ public class FriendRec extends Configured implements Tool {
     public static class FriendComp implements Comparator<FriendCount> {
         @Override
         public int compare(FriendCount f1, FriendCount f2) {
-            return f2.count - f1.count;
+            return f1.count - f2.count;
         }
     }
 
@@ -172,7 +168,13 @@ public class FriendRec extends Configured implements Tool {
             }
 
             int i = 0;
-            int[] vals = new int[10];
+            int[] vals;
+            if(pq.size() < 10) {
+                vals = new int[pq.size()];
+            }
+            else {
+                vals = new int[10];
+            }
             while(i < 10) {
                 FriendCount friendSuggestion = pq.poll();
                 if(friendSuggestion == null)
