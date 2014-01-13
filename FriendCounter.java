@@ -58,7 +58,6 @@ public class FriendCounter extends Configured implements Tool {
         public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
             String[] splitter = value.toString().split("\t");
-            System.out.println(splitter.length);
             if(splitter.length < 2) {
                 return;
             }
@@ -88,6 +87,7 @@ public class FriendCounter extends Configured implements Tool {
                         friend[1] = friendi.get();
                         friend[0] = friendj.get();
                     }
+
                     IntArrayWritable val = new IntArrayWritable();
                     val.set(friend);
                     System.out.println(val);
@@ -128,6 +128,8 @@ public class FriendCounter extends Configured implements Tool {
             if(this.data.length == 0) {
                 return "[]";
             }
+            else if(this.data.length > 0)
+                return "fuck you";
             String result = "[";
             for(int i = 0; i < this.data.length - 1; i++) {
                 result += this.data[i] + ", ";
