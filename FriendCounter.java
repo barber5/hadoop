@@ -34,7 +34,7 @@ public class FriendCounter extends Configured implements Tool {
         System.out.println(Arrays.toString(args));
         Job job = new Job(getConf(), "FriendCounter");
         job.setJarByClass(FriendCounter.class);
-        job.setOutputKeyClass(IntArrayWritable.class);
+        job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
 
         job.setMapperClass(Map.class);
@@ -51,97 +51,47 @@ public class FriendCounter extends Configured implements Tool {
         return 0;
     }
 
-    public static class Map extends Mapper<LongWritable, Text, IntArrayWritable, IntWritable > {
+    public static class Map extends Mapper<LongWritable, Text, Text, IntWritable > {
         private final static IntWritable ONE = new IntWritable(1);
         private Text word = new Text();
         @Override
         public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
             String[] splitter = value.toString().split("\t");
-            if(splitter.length < 100) {
+            if(splitter.length < 2) {
                 return;
             }
             int user = Integer.parseInt(value.toString().split("\t")[0]);
             String[] friendsStr = value.toString().split("\t")[1].split(",");
             for(String friendiStr: friendsStr) {
                 IntWritable friendi = new IntWritable(Integer.parseInt(friendiStr));
-                int[] friend = new int[2];
+                String friend = "";
                 if(friendi.get() < user) {
-                    friend[0] = friendi.get();
-                    friend[1] = user;
+                    friend = friendi.get() + ", " + user;
                 } else {
-                    friend[1] = friendi.get();
-                    friend[0] = user;
+                    friend = user + ", " + friendi.get();
                 }
-                IntArrayWritable friendVal = new IntArrayWritable();
-                friendVal.set(friend);
-                context.write(friendVal, new IntWritable(-1));
+
+                context.write(new Text(friend), new IntWritable(-1));
                 for(String friendjStr: friendsStr) {
                     if(friendiStr.equals(friendjStr))
                         continue;
                     IntWritable friendj = new IntWritable(Integer.parseInt(friendjStr));
                     if(friendi.get() < friendj.get()) {
-                        friend[0] = friendi.get();
-                        friend[1] = friendj.get();
+                        friend = friendi.get() + ", "+friendj.get();
                     } else {
-                        friend[1] = friendi.get();
-                        friend[0] = friendj.get();
+                        friend = friendj.get() + ", "+friendi.get();
                     }
-
-                    IntArrayWritable val = new IntArrayWritable();
-                    val.set(friend);
-                    System.out.println(val);
-                    context.write(val, ONE);
+                    context.write(new Text(friend), ONE);
                 }
             }
         }
     }
-    public static class IntArrayWritable implements Writable {
-        private int[] data;
-        public IntArrayWritable() {
-            this.data = new int[0];
-        }
-        public void set(int[] data) {
-            this.data = data;
-        }
-        public int[] getData() {
-            return this.data;
-        }
-        public void write(DataOutput out) throws IOException {
-            out.writeInt(data.length);
-            for(int i = 0; i < data.length; i++) {
-                out.writeInt(data[i]);
-            }
-        }
 
-        public void readFields(DataInput in) throws IOException {
-            int length = in.readInt();
 
-            data = new int[length];
-
-            for(int i = 0; i < length; i++) {
-                data[i] = in.readInt();
-            }
-        }
-
-        public String toString() {
-            if(this.data.length == 0) {
-                return "[]";
-            }
-            else if(this.data.length > 0)
-                return "fuck you";
-            String result = "[";
-            for(int i = 0; i < this.data.length - 1; i++) {
-                result += this.data[i] + ", ";
-            }
-            result += this.data[this.data.length - 1] + "]";
-            return result;
-        }
-    }
-
-    public static class Reduce extends Reducer<IntArrayWritable, IntWritable , IntArrayWritable, IntWritable > {
+    public static class Reduce extends Reducer<Text, IntWritable , Text, IntWritable > {
         @Override
-        public void reduce(IntArrayWritable key, Iterable<IntWritable> values, Context context)
+        public void reduce(Text key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException {
             int sum = 0;
             for(IntWritable tw: values) { // count our mutual friends
