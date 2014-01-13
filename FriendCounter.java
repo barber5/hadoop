@@ -4,7 +4,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Comparator;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -46,8 +45,6 @@ public class FriendCounter extends Configured implements Tool {
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
-
-        System.out.println("lovely lovely config");
 
         job.waitForCompletion(true);
 
@@ -93,6 +90,7 @@ public class FriendCounter extends Configured implements Tool {
 
                     IntArrayWritable val = new IntArrayWritable();
                     val.set(friend);
+                    System.out.println(val);
                     context.write(val, ONE);
                 }
             }
@@ -136,22 +134,6 @@ public class FriendCounter extends Configured implements Tool {
             }
             result += this.data[this.data.length - 1] + "]";
             return result;
-        }
-    }
-
-    public static class FriendCount {
-        public int friendId;
-        public int count;
-        public FriendCount(int friendId) {
-            this.friendId = friendId;
-            this.count = 0;
-        }
-    }
-
-    public static class FriendComp implements Comparator<FriendCount> {
-        @Override
-        public int compare(FriendCount f1, FriendCount f2) {
-            return f1.count - f2.count;
         }
     }
 
