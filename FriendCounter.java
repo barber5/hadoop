@@ -24,7 +24,7 @@ import org.apache.hadoop.util.ToolRunner;
 public class FriendCounter extends Configured implements Tool {
     public static void main(String[] args) throws Exception {
         System.out.println(Arrays.toString(args));
-        int res = ToolRunner.run(new Configuration(), new FriendRec(), args);
+        int res = ToolRunner.run(new Configuration(), new FriendCounter(), args);
 
         System.exit(res);
     }
