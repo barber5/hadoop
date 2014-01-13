@@ -139,7 +139,7 @@ public class FriendRec extends Configured implements Tool {
     public static class FriendComp implements Comparator<FriendCount> {
         @Override
         public int compare(FriendCount f1, FriendCount f2) {
-            return f1.count - f2.count;
+            return f2.count - f1.count;
         }
     }
 

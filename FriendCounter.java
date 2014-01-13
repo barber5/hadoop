@@ -67,9 +67,9 @@ public class FriendCounter extends Configured implements Tool {
                 IntWritable friendi = new IntWritable(Integer.parseInt(friendiStr));
                 String friend = "";
                 if(friendi.get() < user) {
-                    friend = friendi.get() + ", " + user;
+                    friend = friendi.get() + "," + user;
                 } else {
-                    friend = user + ", " + friendi.get();
+                    friend = user + "," + friendi.get();
                 }
 
                 context.write(new Text(friend), new IntWritable(-1));
@@ -78,9 +78,9 @@ public class FriendCounter extends Configured implements Tool {
                         continue;
                     IntWritable friendj = new IntWritable(Integer.parseInt(friendjStr));
                     if(friendi.get() < friendj.get()) {
-                        friend = friendi.get() + ", "+friendj.get();
+                        friend = friendi.get() + ","+friendj.get();
                     } else {
-                        friend = friendj.get() + ", "+friendi.get();
+                        friend = friendj.get() + ","+friendi.get();
                     }
                     context.write(new Text(friend), ONE);
                 }
