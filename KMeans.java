@@ -59,7 +59,7 @@ public class KMeans extends Configured implements Tool {
             keys.addElement(vec);
             line = br.readLine();
         }
-        Configuration conf = getConf();
+        Configuration conf = job.getConfiguration();
         FileSystem fs = FileSystem.get(conf);
         Path temp = new Path("tmp/", UUID.randomUUID().toString());
         ObjectOutputStream os = new ObjectOutputStream(fs.create(temp));
