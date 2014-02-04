@@ -69,10 +69,9 @@ public class KMeans extends Configured implements Tool {
         DistributedCache.addCacheFile(new URI(temp + "#centroids"), conf);
         DistributedCache.createSymlink(conf);
 
-            FileInputFormat.addInputPath(job, new Path(args[0]));
-            FileOutputFormat.setOutputPath(job, new Path(args[1]));
-            job.waitForCompletion(true);
-
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        job.waitForCompletion(true);
         return 0;
     }
 
@@ -83,6 +82,9 @@ public class KMeans extends Configured implements Tool {
             Configuration conf = context.getConfiguration();
             try {
                 Path uri = DistributedCache.getLocalCacheFiles(context.getConfiguration())[0];
+                for(int i = 0; i < 20; i++) {
+                    System.out.println(i);
+                }
                 System.out.println(uri.toString());
                 BufferedReader br = new BufferedReader(new FileReader(uri.toString()));
 
