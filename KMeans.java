@@ -1,3 +1,5 @@
+package co.brbr5.app;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
