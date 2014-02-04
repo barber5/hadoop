@@ -42,11 +42,14 @@ public class KMeans extends Configured implements Tool {
 
         job.setInputFormatClass(TextInputFormat.class); // breaks into lines
         job.setOutputFormatClass(TextOutputFormat.class);
+        for(int i = 0; i < 20; i++) {
+            FileInputFormat.addInputPath(job, new Path("out"+i+".txt");
+            FileOutputFormat.setOutputPath(job, new Path("out"+(i+1)+".txt");
+            job.waitForCompletion(true);
+        }
 
-        FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
-        job.waitForCompletion(true);
+
 
         return 0;
     }
