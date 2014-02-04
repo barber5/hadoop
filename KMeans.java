@@ -85,7 +85,7 @@ public class KMeans extends Configured implements Tool {
                 for(int i = 0; i < 20; i++) {
                     System.out.println(i);
                 }
-                System.out.println(uri.length)
+                System.out.println(uri.length);
                 System.out.println(uri.toString());
                 BufferedReader br = new BufferedReader(new FileReader(uri.toString()));
 
