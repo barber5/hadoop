@@ -1,9 +1,8 @@
 package co.brbr5.app;
-
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
+import java.util.Set;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -42,27 +41,39 @@ public class KMeans extends Configured implements Tool {
 
         job.setInputFormatClass(TextInputFormat.class); // breaks into lines
         job.setOutputFormatClass(TextOutputFormat.class);
+
         for(int i = 0; i < 20; i++) {
-            FileInputFormat.addInputPath(job, new Path("out"+i+".txt"));
-            FileOutputFormat.setOutputPath(job, new Path("out"+(i+1)+".txt"));
+            FileInputFormat.addInputPath(job, new Path(args[0]));
+            FileOutputFormat.setOutputPath(job, new Path(args[1]));
             job.waitForCompletion(true);
         }
-
-
-
-
         return 0;
     }
 
     public static class Map extends Mapper<LongWritable, Text, IntWritable, IntArrayWritable > {
+        static private Set<String> keys;
+
         public void setup(Context context) {
             Configuration conf = context.getConfiguration();
-            System.out.println(3);
+            ObjectInputStream is =
+                    null;
+            try {
+                is = new ObjectInputStream(new FileInputStream("c1.txt"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                keys = (Set<String>) is.readObject();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
         @Override
         public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
-            System.out.println(4);
+            System.out.println(keys.toString());
 
 
         }
