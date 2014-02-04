@@ -72,7 +72,7 @@ public class KMeans extends Configured implements Tool {
             FileInputFormat.addInputPath(job, new Path(args[0]));
             FileOutputFormat.setOutputPath(job, new Path(args[1]));
             job.waitForCompletion(true);
-        
+
         return 0;
     }
 
@@ -82,22 +82,12 @@ public class KMeans extends Configured implements Tool {
         public void setup(Context context) {
             Configuration conf = context.getConfiguration();
             try {
-                ObjectInputStream is =
-                        null;
-                try {
-                    is = new ObjectInputStream(new FileInputStream("centroids"));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    keys = (Set<String>) is.readObject();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e); // bizarre!
-            }
+                Path uri = DistributedCache.getLocalCacheFiles(context.getConfiguration())[0];
+                System.out.println(uri.toString());
 
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         @Override
         public void map(LongWritable key, Text value, Context context)
