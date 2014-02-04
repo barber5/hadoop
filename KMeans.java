@@ -84,6 +84,7 @@ public class KMeans extends Configured implements Tool {
             try {
                 Path uri = DistributedCache.getLocalCacheFiles(context.getConfiguration())[0];
                 System.out.println(uri.toString());
+                BufferedReader br = new BufferedReader(new FileReader(uri.toString()));
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -93,7 +94,7 @@ public class KMeans extends Configured implements Tool {
         public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
             System.out.println(keys.toString());
-
+            context.write(new IntWritable(22), new IntArrayWritable());
 
         }
     }
@@ -144,7 +145,7 @@ public class KMeans extends Configured implements Tool {
         @Override
         public void reduce(IntWritable key, Iterable<IntArrayWritable> values, Context context)
                 throws IOException, InterruptedException {
-
+            context.write(new IntWritable(44), new IntArrayWritable());
         }
     }
 }
