@@ -82,11 +82,11 @@ public class KMeans extends Configured implements Tool {
             Configuration conf = context.getConfiguration();
             try {
                 Path uri = DistributedCache.getLocalCacheFiles(context.getConfiguration())[0];
+                System.out.println(uri.toString());
+                BufferedReader br = new BufferedReader(new FileReader(uri.toString()));
                 for(int i = 0; i < 20; i++) {
                     System.out.println(i);
                 }
-                System.out.println(uri.toString());
-                BufferedReader br = new BufferedReader(new FileReader(uri.toString()));
 
             } catch (IOException e) {
                 e.printStackTrace();
