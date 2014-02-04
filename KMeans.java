@@ -1,11 +1,15 @@
 package co.brbr5.app;
 import java.io.*;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.UUID;
+import java.util.Vector;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -42,6 +46,30 @@ public class KMeans extends Configured implements Tool {
         job.setInputFormatClass(TextInputFormat.class); // breaks into lines
         job.setOutputFormatClass(TextOutputFormat.class);
 
+        Vector<Vector<Float>> keys = new Vector<Vector<Float>>();
+        BufferedReader br = new BufferedReader(new FileReader(args[2]));
+        String line = br.readLine();
+        while(line != null) {
+            Vector<Float> vec = new Vector<Float>();
+            String[] lineArr = line.split(" ");
+            for(String s : lineArr) {
+                float f = Float.parseFloat(s);
+                vec.addElement(f);
+            }
+            keys.addElement(vec);
+            line = br.readLine();
+        }
+        Configuration conf = getConf();
+        FileSystem fs = FileSystem.get(conf);
+        Path temp = new Path("tmp/", UUID.randomUUID().toString());
+        ObjectOutputStream os = new ObjectOutputStream(fs.create(temp));
+        os.writeObject(keys);
+        os.close();
+        fs.deleteOnExit(temp);
+
+        // Register the file in the DC.  Open the local file "targets"
+        DistributedCache.addCacheFile(new URI(temp + "#centroids"), conf);
+        DistributedCache.createSymlink(conf);
         for(int i = 0; i < 20; i++) {
             FileInputFormat.addInputPath(job, new Path(args[0]));
             FileOutputFormat.setOutputPath(job, new Path(args[1]));
@@ -55,20 +83,23 @@ public class KMeans extends Configured implements Tool {
 
         public void setup(Context context) {
             Configuration conf = context.getConfiguration();
-            ObjectInputStream is =
-                    null;
             try {
-                is = new ObjectInputStream(new FileInputStream("c1.txt"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                keys = (Set<String>) is.readObject();
-            } catch (IOException e) {
-                e.printStackTrace();
+                ObjectInputStream is =
+                        null;
+                try {
+                    is = new ObjectInputStream(new FileInputStream("centroids"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    keys = (Set<String>) is.readObject();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e); // bizarre!
             }
+
         }
         @Override
         public void map(LongWritable key, Text value, Context context)
