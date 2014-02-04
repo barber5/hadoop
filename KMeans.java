@@ -66,15 +66,13 @@ public class KMeans extends Configured implements Tool {
         os.writeObject(keys);
         os.close();
         fs.deleteOnExit(temp);
-
-        // Register the file in the DC.  Open the local file "targets"
         DistributedCache.addCacheFile(new URI(temp + "#centroids"), conf);
         DistributedCache.createSymlink(conf);
-        for(int i = 0; i < 20; i++) {
+
             FileInputFormat.addInputPath(job, new Path(args[0]));
             FileOutputFormat.setOutputPath(job, new Path(args[1]));
             job.waitForCompletion(true);
-        }
+        
         return 0;
     }
 
