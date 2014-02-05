@@ -76,7 +76,7 @@ public class KMeans extends Configured implements Tool {
     }
 
     public static class Map extends Mapper<LongWritable, Text, IntWritable, IntArrayWritable > {
-        static private Set<String> keys;
+        static private Vector<Vector<Float>> keys = new Vector<Vector<Float>>();
 
         public void setup(Context context) {
             Configuration conf = context.getConfiguration();
@@ -84,8 +84,16 @@ public class KMeans extends Configured implements Tool {
                 Path uri = DistributedCache.getLocalCacheFiles(context.getConfiguration())[0];
                 System.out.println(uri.toString());
                 BufferedReader br = new BufferedReader(new FileReader(uri.toString()));
-                for(int i = 0; i < 20; i++) {
-                    System.out.println(i);
+                String line = br.readLine();
+                while(line != null) {
+                    Vector<Float> vec = new Vector<Float>();
+                    String[] lineArr = line.split(" ");
+                    for(String s : lineArr) {
+                        float f = Float.parseFloat(s);
+                        vec.addElement(f);
+                    }
+                    keys.addElement(vec);
+                    line = br.readLine();
                 }
 
             } catch (IOException e) {
