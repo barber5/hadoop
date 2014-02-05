@@ -230,7 +230,12 @@ public class KMeans extends Configured implements Tool {
                 e.printStackTrace();
             }
             Path temp = new Path("tmp/", UUID.randomUUID().toString());
-            ObjectOutputStream os = new ObjectOutputStream(fs.create(temp));
+            ObjectOutputStream os = null;
+            try {
+                os = new ObjectOutputStream(fs.create(temp));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             try {
                 os.writeObject(keys);
             } catch (IOException e) {
