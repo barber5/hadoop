@@ -34,9 +34,9 @@ public class KMeans extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
         System.out.println(Arrays.toString(args));
-        Configuration conf = getConf();
 
-        Job job = new Job(conf, "FriendRec");
+
+        Job job = new Job(new Configuration(), "Kmeans");
         job.setJarByClass(KMeans.class);
         job.setOutputKeyClass(DoubleArrayWritable.class);
         job.setOutputValueClass(DoubleArrayWritable.class);
@@ -70,6 +70,7 @@ public class KMeans extends Configured implements Tool {
         }
         File file = new File(args[2]);
         file.delete();
+        Configuration conf = job.getConfiguration();
         FileSystem fs = FileSystem.get(conf);
         Path temp = new Path("tmp/", UUID.randomUUID().toString());
         ObjectOutputStream os = new ObjectOutputStream(fs.create(temp));
