@@ -195,7 +195,6 @@ public class KMeans extends Configured implements Tool {
         @Override
         public void reduce(DoubleArrayWritable key, Iterable<DoubleArrayWritable> values, Context context)
                 throws IOException, InterruptedException {
-            System.out.println("hi");
             double[] newCenter = new double[key.getData().length];
             int j = 0;
             for(DoubleArrayWritable daw : values) {
@@ -211,7 +210,9 @@ public class KMeans extends Configured implements Tool {
             DoubleArrayWritable writableCenter = new DoubleArrayWritable(newCenter);
             for(DoubleArrayWritable daw: values) {
                 context.write(daw, writableCenter);
+                System.out.println("hi");
             }
+
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(clustFile)));
             for(int i = 0; i < newCenter.length - 1; i++) {
                 out.print(newCenter[i]+" ");
