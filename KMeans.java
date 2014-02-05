@@ -52,7 +52,9 @@ public class KMeans extends Configured implements Tool {
 
 
 
-
+        for(int i = 0; i < 20; i++) {
+            System.out.println(i);
+        }
         Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
         BufferedReader br = new BufferedReader(new FileReader(args[2]));
         String line = br.readLine();
@@ -77,7 +79,9 @@ public class KMeans extends Configured implements Tool {
         DistributedCache.addCacheFile(new URI(temp + "#centroids"), conf);
         DistributedCache.createSymlink(conf);
 
-
+        for(int i = 0; i < 20; i++) {
+            System.out.println(i);
+        }
 
 
             job.waitForCompletion(true);
