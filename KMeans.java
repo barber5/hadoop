@@ -69,7 +69,7 @@ public class KMeans extends Configured implements Tool {
         fs.deleteOnExit(temp);
         DistributedCache.addCacheFile(new URI(temp + "#centroids"), conf);
         DistributedCache.createSymlink(conf);
-        for(int i = 0; i < 1; i++) {
+        for(int i = 0; i < 20; i++) {
             FileInputFormat.addInputPath(job, new Path(args[0]));
             FileOutputFormat.setOutputPath(job, new Path(args[1]));
             job.waitForCompletion(true);
@@ -217,10 +217,8 @@ public class KMeans extends Configured implements Tool {
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(clustFile, true)));
             for(int i = 0; i < newCenter.length - 1; i++) {
                 out.print(newCenter[i]+" ");
-                System.out.print(newCenter[i]+" ");
             }
             out.println(newCenter[newCenter.length-1]);
-            System.out.println(newCenter[newCenter.length-1]);
             out.close();
         }
     }
