@@ -3,7 +3,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Set;
+
 import java.util.UUID;
 import java.util.Vector;
 
@@ -12,12 +12,10 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -33,9 +31,10 @@ public class KMeans extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
         System.out.println(Arrays.toString(args));
-        Job job = new Job(getConf(), "KMeans");
+
+        Job job = new Job(getConf(), "FriendRec");
         job.setJarByClass(KMeans.class);
-        job.setOutputKeyClass(DoubleArrayWritable.class);
+        job.setOutputKeyClass(IntWritable.class);
         job.setOutputValueClass(DoubleArrayWritable.class);
 
         job.setMapperClass(Map.class);
@@ -43,6 +42,15 @@ public class KMeans extends Configured implements Tool {
 
         job.setInputFormatClass(TextInputFormat.class); // breaks into lines
         job.setOutputFormatClass(TextOutputFormat.class);
+
+
+
+        job.waitForCompletion(true);
+
+
+
+
+
 
         Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
         BufferedReader br = new BufferedReader(new FileReader(args[2]));
