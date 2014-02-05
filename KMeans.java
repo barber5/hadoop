@@ -100,7 +100,7 @@ public class KMeans extends Configured implements Tool {
         @Override
         public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
-            System.out.println(keys.toString());
+            System.out.println(value.toString());
             int[] arr = {4,3};
             context.write(new IntWritable(22), new IntArrayWritable(arr));
 
