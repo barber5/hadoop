@@ -25,6 +25,7 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 public class KMeans extends Configured implements Tool {
+    static String clustFile;
     public static void main(String[] args) throws Exception {
         System.out.println(Arrays.toString(args));
         int res = ToolRunner.run(new Configuration(), new KMeans(), args);
@@ -37,8 +38,8 @@ public class KMeans extends Configured implements Tool {
         System.out.println(Arrays.toString(args));
         Job job = new Job(getConf(), "KMeans");
         job.setJarByClass(KMeans.class);
-        job.setOutputKeyClass(IntWritable.class);
-        job.setOutputValueClass(IntArrayWritable.class);
+        job.setOutputKeyClass(DoubleArrayWritable.class);
+        job.setOutputValueClass(DoubleArrayWritable.class);
 
         job.setMapperClass(Map.class);
         job.setReducerClass(Reduce.class);
@@ -48,6 +49,7 @@ public class KMeans extends Configured implements Tool {
 
         Vector<Vector<Float>> keys = new Vector<Vector<Float>>();
         BufferedReader br = new BufferedReader(new FileReader(args[2]));
+        clustFile = args[2];
         String line = br.readLine();
         while(line != null) {
             Vector<Float> vec = new Vector<Float>();
@@ -59,6 +61,8 @@ public class KMeans extends Configured implements Tool {
             keys.addElement(vec);
             line = br.readLine();
         }
+        File file = new File(args[2]);
+        file.delete();
         Configuration conf = job.getConfiguration();
         FileSystem fs = FileSystem.get(conf);
         Path temp = new Path("tmp/", UUID.randomUUID().toString());
@@ -76,8 +80,8 @@ public class KMeans extends Configured implements Tool {
 
         return 0;
     }
-
-    public static class Map extends Mapper<LongWritable, Text, IntWritable, IntArrayWritable > {
+    // output is centroid and the point so that the reducer gets a centroid and the list of its points
+    public static class Map extends Mapper<LongWritable, Text, DoubleArrayWritable, DoubleArrayWritable > {
         static private Vector<Vector<Float>> keys = new Vector<Vector<Float>>();
 
         public void setup(Context context) {
@@ -100,37 +104,62 @@ public class KMeans extends Configured implements Tool {
         @Override
         public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
-            System.out.println(value.toString());
-            int[] arr = {4,3};
-            context.write(new IntWritable(22), new IntArrayWritable(arr));
-
+            Vector<Float> vec = new Vector<Float>();
+            String[] lineArr = value.toString().split(" ");
+            for(String s : lineArr) {
+                float f = Float.parseFloat(s);
+                vec.addElement(f);
+            }
+            Vector<Float> centroid = keys.get(0);
+            Double closest = Double.MAX_VALUE;
+            for(Vector<Float> c : keys) {
+                double distSq = 0.0;
+                for(int i = 0; i < c.size(); i++) {
+                    distSq += (c.get(i) - vec.get(i))*(c.get(i) - vec.get(i));
+                }
+                if(distSq < closest) {
+                    closest = distSq;
+                    centroid = c;
+                }
+            }
+            DoubleArrayWritable k = new DoubleArrayWritable(vec);
+            DoubleArrayWritable v = new DoubleArrayWritable(centroid);
+            context.write(k, v);
         }
     }
-    public static class IntArrayWritable implements Writable {
-        private int[] data;
-        public IntArrayWritable() {
-            this.data = new int[0];
+    public static class DoubleArrayWritable implements Writable {
+        private double[] data;
+        public DoubleArrayWritable() {
+            this.data = new double[0];
         }
-        public IntArrayWritable(int[] data) {
+        public DoubleArrayWritable(double[] data) {
             this.data = data;
         }
-        public void set(int[] data) {
+
+        public DoubleArrayWritable(Vector<Float> vec) {
+            data = new double[vec.size()];
+            for(int i = 0 ; i < vec.size(); i++) {
+                data[i] = vec.get(i);
+            }
+        }
+
+        public void set(double[] data) {
             this.data = data;
         }
-        public int[] getData() {
+        public double[] getData() {
             return this.data;
         }
         public void write(DataOutput out) throws IOException {
             out.writeInt(data.length);
             for(int i = 0; i < data.length; i++) {
-                out.writeInt(data[i]);
+                out.writeDouble(data[i]);
             }
         }
 
         public void readFields(DataInput in) throws IOException {
             int length = in.readInt();
 
-            data = new int[length];
+            data = new double[length];
 
             for(int i = 0; i < length; i++) {
                 data[i] = in.readInt();
@@ -152,12 +181,32 @@ public class KMeans extends Configured implements Tool {
 
 
 
-    public static class Reduce extends Reducer<IntWritable, IntArrayWritable , IntWritable, IntArrayWritable > {
+    public static class Reduce extends Reducer<DoubleArrayWritable, DoubleArrayWritable , DoubleArrayWritable, DoubleArrayWritable > {
         @Override
-        public void reduce(IntWritable key, Iterable<IntArrayWritable> values, Context context)
+        public void reduce(DoubleArrayWritable key, Iterable<DoubleArrayWritable> values, Context context)
                 throws IOException, InterruptedException {
-            int[] arr = {4,3};
-            context.write(new IntWritable(44), new IntArrayWritable(arr));
+            double[] newCenter = new double[key.getData().length];
+            int j = 0;
+            for(DoubleArrayWritable daw : values) {
+                j++;
+                double[] pt = daw.getData();
+                for(int i = 0; i < pt.length; i++) {
+                    newCenter[i] += pt[i];
+                }
+            }
+            for(int i = 0; i < newCenter.length; i++) {
+                newCenter[i] = newCenter[i] / j;
+            }
+            DoubleArrayWritable writableCenter = new DoubleArrayWritable(newCenter);
+            for(DoubleArrayWritable daw: values) {
+                context.write(daw, writableCenter);
+            }
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(clustFile)));
+            for(int i = 0; i < newCenter.length - 1; i++) {
+                out.print(newCenter[i]+" ");
+            }
+            out.println(newCenter[newCenter.length-1]);
+            out.close();
         }
     }
 }
