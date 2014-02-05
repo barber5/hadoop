@@ -72,6 +72,7 @@ public class KMeans extends Configured implements Tool {
         for(int i = 0; i < 20; i++) {
             System.out.println(i);
             job.waitForCompletion(true);
+            /*
             job = new Job(getConf(), "KMeans");
             job.setJarByClass(KMeans.class);
             job.setOutputKeyClass(DoubleArrayWritable.class);
@@ -84,7 +85,7 @@ public class KMeans extends Configured implements Tool {
             job.setOutputFormatClass(TextOutputFormat.class);
             FileInputFormat.addInputPath(job, new Path(args[0]));
             FileOutputFormat.setOutputPath(job, new Path(args[1]+i));
-
+            */
         }
 
         return 0;
