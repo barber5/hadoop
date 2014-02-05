@@ -82,7 +82,7 @@ public class KMeans extends Configured implements Tool {
 
 
 
-            job.waitForCompletion(true);
+        job.waitForCompletion(true);
 
 
         return 0;
@@ -92,13 +92,12 @@ public class KMeans extends Configured implements Tool {
         static private Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
 
         public void setup(Context context) {
-            for(int i = 0; i < 20; i++) {
-                System.out.println(i);
-            }
+
             Configuration conf = context.getConfiguration();
             try {
                 keys.clear();
-                Path uri = DistributedCache.getLocalCacheFiles(context.getConfiguration())[0];
+                Path[] uri = DistributedCache.getLocalCacheFiles(context.getConfiguration());
+                System.out.println(uri);
                 for(int i = 0; i < 20; i++) {
                     System.out.println(i);
                 }
