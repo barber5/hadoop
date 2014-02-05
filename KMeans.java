@@ -36,7 +36,7 @@ public class KMeans extends Configured implements Tool {
         System.out.println(Arrays.toString(args));
         Configuration conf = getConf();
 
-        Job job = new Job(getConf(), "FriendRec");
+        Job job = new Job(conf, "FriendRec");
         job.setJarByClass(KMeans.class);
         job.setOutputKeyClass(DoubleArrayWritable.class);
         job.setOutputValueClass(DoubleArrayWritable.class);
@@ -50,7 +50,6 @@ public class KMeans extends Configured implements Tool {
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
-        job.waitForCompletion(true);
 
 
 
