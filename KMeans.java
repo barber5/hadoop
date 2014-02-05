@@ -96,7 +96,9 @@ public class KMeans extends Configured implements Tool {
             Configuration conf = context.getConfiguration();
             try {
                 keys.clear();
-                Path[] uri = DistributedCache.getLocalCacheFiles(context.getConfiguration());
+                System.out.println("cache files:"+conf.get("mapred.cache.files"));
+
+                Path[] uri = DistributedCache.getLocalCacheFiles(conf);
                 System.out.println(uri);
                 for(int i = 0; i < 20; i++) {
                     System.out.println(i);
