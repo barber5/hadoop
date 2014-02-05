@@ -119,8 +119,8 @@ public class KMeans extends Configured implements Tool {
                     centroid = c;
                 }
             }
-            DoubleArrayWritable k = new DoubleArrayWritable(vec);
-            DoubleArrayWritable v = new DoubleArrayWritable(centroid);
+            DoubleArrayWritable v = new DoubleArrayWritable(vec);
+            DoubleArrayWritable k = new DoubleArrayWritable(centroid);
             context.write(k, v);
         }
     }
