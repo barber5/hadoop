@@ -38,7 +38,7 @@ public class KMeans extends Configured implements Tool {
 
         Job job = new Job(getConf(), "FriendRec");
         job.setJarByClass(KMeans.class);
-        job.setOutputKeyClass(IntWritable.class);
+        job.setOutputKeyClass(DoubleArrayWritable.class);
         job.setOutputValueClass(DoubleArrayWritable.class);
 
         job.setMapperClass(Map.class);
