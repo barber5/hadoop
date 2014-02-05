@@ -84,22 +84,11 @@ public class KMeans extends Configured implements Tool {
                 keys.clear();
                 Path uri = DistributedCache.getLocalCacheFiles(context.getConfiguration())[0];
 
-                BufferedReader br = new BufferedReader(new FileReader(uri.toString()));
-                String line = br.readLine();
-                for(int i = 0; i < 20; i++) {
-                    System.out.println(uri.toString());
-                    System.out.println(line);
-                }
-                while(line != null) {
-                    Vector<Float> vec = new Vector<Float>();
-                    String[] lineArr = line.split(" ");
-                    for(String s : lineArr) {
-                        System.out.println(s);
-                        float f = Float.parseFloat(s);
-                        vec.addElement(f);
-                    }
-                    keys.addElement(vec);
-                    line = br.readLine();
+                ObjectInputStream os = new ObjectInputStream(new FileInputStream(uri.toString()));
+                try {
+                    keys = (Vector<Vector<Float>>) os.readObject();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
                 }
 
             } catch (IOException e) {
