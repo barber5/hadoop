@@ -33,7 +33,14 @@ public class KMeans extends Configured implements Tool {
         System.out.println(Arrays.toString(args));
         Configuration conf = getConf();
 
-
+        Job job = new Job(conf, "FriendRec");
+        job.setJarByClass(KMeans.class);
+        job.setOutputKeyClass(IntWritable.class);
+        job.setOutputValueClass(DoubleArrayWritable.class);
+        job.setMapperClass(Map.class);
+        job.setReducerClass(Reduce.class);
+        job.setInputFormatClass(TextInputFormat.class); // breaks into lines
+        job.setOutputFormatClass(TextOutputFormat.class);
 
 
 
@@ -62,19 +69,11 @@ public class KMeans extends Configured implements Tool {
         DistributedCache.addCacheFile(new URI(temp + "#centroids"), conf);
         DistributedCache.createSymlink(conf);
 
-        for(int i = 0; i < 20; i++) {
-            System.out.println(i);
-            Job job = new Job(conf, "FriendRec");
-            job.setJarByClass(KMeans.class);
-            job.setOutputKeyClass(IntWritable.class);
-            job.setOutputValueClass(DoubleArrayWritable.class);
-            job.setMapperClass(Map.class);
-            job.setReducerClass(Reduce.class);
-            job.setInputFormatClass(TextInputFormat.class); // breaks into lines
-            job.setOutputFormatClass(TextOutputFormat.class);
+
+
 
             job.waitForCompletion(true);
-        }
+        
 
         return 0;
     }
