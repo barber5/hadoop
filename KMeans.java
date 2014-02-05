@@ -96,7 +96,8 @@ public class KMeans extends Configured implements Tool {
         public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
             System.out.println(keys.toString());
-            context.write(new IntWritable(22), new IntArrayWritable());
+            int[] arr = {4,3};
+            context.write(new IntWritable(22), new IntArrayWritable(arr));
 
         }
     }
@@ -104,6 +105,9 @@ public class KMeans extends Configured implements Tool {
         private int[] data;
         public IntArrayWritable() {
             this.data = new int[0];
+        }
+        public IntArrayWritable(int[] data) {
+            this.data = data;
         }
         public void set(int[] data) {
             this.data = data;
@@ -147,7 +151,8 @@ public class KMeans extends Configured implements Tool {
         @Override
         public void reduce(IntWritable key, Iterable<IntArrayWritable> values, Context context)
                 throws IOException, InterruptedException {
-            context.write(new IntWritable(44), new IntArrayWritable());
+            int[] arr = {4,3};
+            context.write(new IntWritable(44), new IntArrayWritable(arr));
         }
     }
 }
