@@ -197,18 +197,20 @@ public class KMeans extends Configured implements Tool {
                 throws IOException, InterruptedException {
             double[] newCenter = new double[key.getData().length];
             int j = 0;
+            Vector<DoubleArrayWritable> daws = new Vector<DoubleArrayWritable>();
             for(DoubleArrayWritable daw : values) {
                 j++;
                 double[] pt = daw.getData();
                 for(int i = 0; i < pt.length; i++) {
                     newCenter[i] += pt[i];
                 }
+                daws.addElement(daw);
             }
             for(int i = 0; i < newCenter.length; i++) {
                 newCenter[i] = newCenter[i] / j;
             }
             DoubleArrayWritable writableCenter = new DoubleArrayWritable(newCenter);
-            for(DoubleArrayWritable daw: values) {
+            for(DoubleArrayWritable daw: daws) {
                 context.write(daw, writableCenter);
                 System.out.println("hi");
             }
