@@ -10,10 +10,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.*;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -127,7 +124,7 @@ public class KMeans extends Configured implements Tool {
             context.write(k, v);
         }
     }
-    public static class DoubleArrayWritable implements Writable,Comparable<DoubleArrayWritable> {
+    public static class DoubleArrayWritable implements Writable,WritableComparable<DoubleArrayWritable> {
         private double[] data;
         public DoubleArrayWritable() {
             this.data = new double[0];
