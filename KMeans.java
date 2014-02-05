@@ -195,7 +195,7 @@ public class KMeans extends Configured implements Tool {
         @Override
         public void reduce(DoubleArrayWritable key, Iterable<DoubleArrayWritable> values, Context context)
                 throws IOException, InterruptedException {
-            System.out.println(key.getData().toString());
+            System.out.println("hi");
             double[] newCenter = new double[key.getData().length];
             int j = 0;
             for(DoubleArrayWritable daw : values) {
