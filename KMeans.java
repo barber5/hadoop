@@ -1,6 +1,7 @@
 package co.brbr5.app;
 import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
@@ -44,15 +45,15 @@ public class KMeans extends Configured implements Tool {
         job.setInputFormatClass(TextInputFormat.class); // breaks into lines
         job.setOutputFormatClass(TextOutputFormat.class);
 
-        Vector<Vector<Float>> keys = new Vector<Vector<Float>>();
+        Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
         BufferedReader br = new BufferedReader(new FileReader(args[2]));
         clustFile = args[2];
         String line = br.readLine();
         while(line != null) {
-            Vector<Float> vec = new Vector<Float>();
+            Vector<Double> vec = new Vector<Double>();
             String[] lineArr = line.split(" ");
             for(String s : lineArr) {
-                float f = Float.parseFloat(s);
+                double f = Double.parseDouble(s);
                 vec.addElement(f);
             }
             keys.addElement(vec);
@@ -80,7 +81,7 @@ public class KMeans extends Configured implements Tool {
     }
     // output is centroid and the point so that the reducer gets a centroid and the list of its points
     public static class Map extends Mapper<LongWritable, Text, DoubleArrayWritable, DoubleArrayWritable > {
-        static private Vector<Vector<Float>> keys = new Vector<Vector<Float>>();
+        static private Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
 
         public void setup(Context context) {
             Configuration conf = context.getConfiguration();
@@ -90,7 +91,7 @@ public class KMeans extends Configured implements Tool {
 
                 ObjectInputStream os = new ObjectInputStream(new FileInputStream(uri.toString()));
                 try {
-                    keys = (Vector<Vector<Float>>) os.readObject();
+                    keys = (Vector<Vector<Double>>) os.readObject();
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -102,15 +103,15 @@ public class KMeans extends Configured implements Tool {
         @Override
         public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
-            Vector<Float> vec = new Vector<Float>();
+            Vector<Double> vec = new Vector<Double>();
             String[] lineArr = value.toString().split(" ");
             for(String s : lineArr) {
-                float f = Float.parseFloat(s);
+                double f = Double.parseDouble(s);
                 vec.addElement(f);
             }
-            Vector<Float> centroid = keys.get(0);
+            Vector<Double> centroid = keys.get(0);
             Double closest = Double.MAX_VALUE;
-            for(Vector<Float> c : keys) {
+            for(Vector<Double> c : keys) {
                 double distSq = 0.0;
                 for(int i = 0; i < c.size(); i++) {
                     distSq += (c.get(i) - vec.get(i))*(c.get(i) - vec.get(i));
@@ -134,7 +135,7 @@ public class KMeans extends Configured implements Tool {
             this.data = data;
         }
 
-        public DoubleArrayWritable(Vector<Float> vec) {
+        public DoubleArrayWritable(Vector<Double> vec) {
             data = new double[vec.size()];
             for(int i = 0 ; i < vec.size(); i++) {
                 data[i] = vec.get(i);
@@ -193,6 +194,7 @@ public class KMeans extends Configured implements Tool {
 
 
     public static class Reduce extends Reducer<DoubleArrayWritable, DoubleArrayWritable , DoubleArrayWritable, DoubleArrayWritable > {
+        static private Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
         @Override
         public void reduce(DoubleArrayWritable key, Iterable<DoubleArrayWritable> values, Context context)
                 throws IOException, InterruptedException {
@@ -207,20 +209,50 @@ public class KMeans extends Configured implements Tool {
                 }
                 daws.addElement(daw);
             }
+            Vector<Double> centroid = new Vector<Double>();
             for(int i = 0; i < newCenter.length; i++) {
                 newCenter[i] = newCenter[i] / j;
+                centroid.addElement(newCenter[i]);
             }
             DoubleArrayWritable writableCenter = new DoubleArrayWritable(newCenter);
             for(DoubleArrayWritable daw: daws) {
                 context.write(daw, writableCenter);
             }
 
-            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(clustFile, true)));
-            for(int i = 0; i < newCenter.length - 1; i++) {
-                out.print(newCenter[i]+" ");
+        }
+        @Override
+        public void cleanup(Context context) {
+            Configuration conf = context.getConfiguration();
+            FileSystem fs = null;
+            try {
+                fs = FileSystem.get(conf);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            out.println(newCenter[newCenter.length-1]);
-            out.close();
+            Path temp = new Path("tmp/", UUID.randomUUID().toString());
+            ObjectOutputStream os = new ObjectOutputStream(fs.create(temp));
+            try {
+                os.writeObject(keys);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                fs.deleteOnExit(temp);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                DistributedCache.addCacheFile(new URI(temp + "#centroids"), conf);
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+            DistributedCache.createSymlink(conf);
+            keys.clear();
         }
     }
 }
