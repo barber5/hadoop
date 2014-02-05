@@ -76,26 +76,11 @@ public class KMeans extends Configured implements Tool {
     }
 
     public static class Map extends Mapper<LongWritable, Text, IntWritable, IntArrayWritable > {
-        static private Set<String> keys;
 
-        public void setup(Context context) {
-            Configuration conf = context.getConfiguration();
-            try {
-                Path uri = DistributedCache.getLocalCacheFiles(context.getConfiguration())[0];
-                System.out.println(uri.toString());
-                BufferedReader br = new BufferedReader(new FileReader(uri.toString()));
-                for(int i = 0; i < 20; i++) {
-                    System.out.println(i);
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         @Override
         public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
-            System.out.println(keys.toString());
+            //System.out.println(keys.toString());
             int[] arr = {4,3};
             context.write(new IntWritable(22), new IntArrayWritable(arr));
 
