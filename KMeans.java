@@ -79,9 +79,7 @@ public class KMeans extends Configured implements Tool {
         DistributedCache.addCacheFile(new URI(temp + "#centroids"), conf);
         DistributedCache.createSymlink(conf);
 
-        for(int i = 0; i < 20; i++) {
-            System.out.println(i);
-        }
+
 
 
             job.waitForCompletion(true);
@@ -94,11 +92,16 @@ public class KMeans extends Configured implements Tool {
         static private Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
 
         public void setup(Context context) {
+            for(int i = 0; i < 20; i++) {
+                System.out.println(i);
+            }
             Configuration conf = context.getConfiguration();
             try {
                 keys.clear();
                 Path uri = DistributedCache.getLocalCacheFiles(context.getConfiguration())[0];
-
+                for(int i = 0; i < 20; i++) {
+                    System.out.println(i);
+                }
                 ObjectInputStream os = new ObjectInputStream(new FileInputStream(uri.toString()));
                 try {
                     keys = (Vector<Vector<Double>>) os.readObject();
