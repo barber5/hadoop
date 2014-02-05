@@ -31,21 +31,7 @@ public class KMeans extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
         System.out.println(Arrays.toString(args));
-
-        Job job = new Job(getConf(), "FriendRec");
-        job.setJarByClass(KMeans.class);
-        job.setOutputKeyClass(IntWritable.class);
-        job.setOutputValueClass(DoubleArrayWritable.class);
-
-        job.setMapperClass(Map.class);
-        job.setReducerClass(Reduce.class);
-
-        job.setInputFormatClass(TextInputFormat.class); // breaks into lines
-        job.setOutputFormatClass(TextOutputFormat.class);
-
-
-
-        job.waitForCompletion(true);
+        Configuration conf = getConf();
 
 
 
@@ -67,7 +53,6 @@ public class KMeans extends Configured implements Tool {
         }
         File file = new File(args[2]);
         file.delete();
-        Configuration conf = job.getConfiguration();
         FileSystem fs = FileSystem.get(conf);
         Path temp = new Path("tmp/", UUID.randomUUID().toString());
         ObjectOutputStream os = new ObjectOutputStream(fs.create(temp));
@@ -79,21 +64,16 @@ public class KMeans extends Configured implements Tool {
 
         for(int i = 0; i < 20; i++) {
             System.out.println(i);
-            job.waitForCompletion(true);
-            /*
-            job = new Job(getConf(), "KMeans");
+            Job job = new Job(conf, "FriendRec");
             job.setJarByClass(KMeans.class);
-            job.setOutputKeyClass(DoubleArrayWritable.class);
+            job.setOutputKeyClass(IntWritable.class);
             job.setOutputValueClass(DoubleArrayWritable.class);
-
             job.setMapperClass(Map.class);
             job.setReducerClass(Reduce.class);
-
             job.setInputFormatClass(TextInputFormat.class); // breaks into lines
             job.setOutputFormatClass(TextOutputFormat.class);
-            FileInputFormat.addInputPath(job, new Path(args[0]));
-            FileOutputFormat.setOutputPath(job, new Path(args[1]+i));
-            */
+
+            job.waitForCompletion(true);
         }
 
         return 0;
