@@ -68,10 +68,10 @@ public class KMeans extends Configured implements Tool {
         fs.deleteOnExit(temp);
         DistributedCache.addCacheFile(new URI(temp + "#centroids"), conf);
         DistributedCache.createSymlink(conf);
+
         for(int i = 0; i < 20; i++) {
             System.out.println(i);
-            FileInputFormat.addInputPath(job, new Path(args[0]));
-            FileOutputFormat.setOutputPath(job, new Path(args[1]));
+            job.waitForCompletion(true);
             job = new Job(getConf(), "KMeans");
             job.setJarByClass(KMeans.class);
             job.setOutputKeyClass(DoubleArrayWritable.class);
@@ -82,7 +82,9 @@ public class KMeans extends Configured implements Tool {
 
             job.setInputFormatClass(TextInputFormat.class); // breaks into lines
             job.setOutputFormatClass(TextOutputFormat.class);
-            job.waitForCompletion(true);
+            FileInputFormat.addInputPath(job, new Path(args[0]));
+            FileOutputFormat.setOutputPath(job, new Path(args[1]+i));
+
         }
 
         return 0;
