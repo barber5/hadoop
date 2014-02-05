@@ -127,7 +127,7 @@ public class KMeans extends Configured implements Tool {
             context.write(k, v);
         }
     }
-    public static class DoubleArrayWritable implements Writable {
+    public static class DoubleArrayWritable implements Writable,Comparable<DoubleArrayWritable> {
         private double[] data;
         public DoubleArrayWritable() {
             this.data = new double[0];
@@ -176,6 +176,19 @@ public class KMeans extends Configured implements Tool {
             }
             result += this.data[this.data.length - 1] + "]";
             return result;
+        }
+
+        @Override
+        public int compareTo(DoubleArrayWritable o) {
+            if(o.getData().length != this.getData().length) {
+                return o.getData().length - this.getData().length;
+            }
+            for(int i = 0; i < o.getData().length; i++) {
+                if(o.getData()[i] != this.getData()[i]) {
+                    return (int)Math.round(o.getData()[i]) - (int)Math.round(this.getData()[i]);
+                }
+            }
+            return 0;
         }
     }
 
