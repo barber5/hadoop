@@ -70,6 +70,7 @@ public class KMeans extends Configured implements Tool {
         DistributedCache.addCacheFile(new URI(temp + "#centroids"), conf);
         DistributedCache.createSymlink(conf);
         for(int i = 0; i < 20; i++) {
+            System.out.println(i);
             FileInputFormat.addInputPath(job, new Path(args[0]));
             FileOutputFormat.setOutputPath(job, new Path(args[1]));
             job.waitForCompletion(true);
