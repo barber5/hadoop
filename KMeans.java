@@ -212,7 +212,6 @@ public class KMeans extends Configured implements Tool {
             DoubleArrayWritable writableCenter = new DoubleArrayWritable(newCenter);
             for(DoubleArrayWritable daw: daws) {
                 context.write(daw, writableCenter);
-                System.out.println("hi");
             }
 
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(clustFile)));
