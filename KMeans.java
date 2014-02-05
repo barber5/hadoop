@@ -23,7 +23,6 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 public class KMeans extends Configured implements Tool {
-    static String clustFile;
     public static void main(String[] args) throws Exception {
         System.out.println(Arrays.toString(args));
         int res = ToolRunner.run(new Configuration(), new KMeans(), args);
@@ -47,7 +46,6 @@ public class KMeans extends Configured implements Tool {
 
         Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
         BufferedReader br = new BufferedReader(new FileReader(args[2]));
-        clustFile = args[2];
         String line = br.readLine();
         while(line != null) {
             Vector<Double> vec = new Vector<Double>();
@@ -74,6 +72,16 @@ public class KMeans extends Configured implements Tool {
             System.out.println(i);
             FileInputFormat.addInputPath(job, new Path(args[0]));
             FileOutputFormat.setOutputPath(job, new Path(args[1]));
+            job = new Job(getConf(), "KMeans");
+            job.setJarByClass(KMeans.class);
+            job.setOutputKeyClass(DoubleArrayWritable.class);
+            job.setOutputValueClass(DoubleArrayWritable.class);
+
+            job.setMapperClass(Map.class);
+            job.setReducerClass(Reduce.class);
+
+            job.setInputFormatClass(TextInputFormat.class); // breaks into lines
+            job.setOutputFormatClass(TextOutputFormat.class);
             job.waitForCompletion(true);
         }
 
