@@ -214,7 +214,7 @@ public class KMeans extends Configured implements Tool {
                 context.write(daw, writableCenter);
             }
 
-            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(clustFile)));
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(clustFile, true)));
             for(int i = 0; i < newCenter.length - 1; i++) {
                 out.print(newCenter[i]+" ");
                 System.out.print(newCenter[i]+" ");
