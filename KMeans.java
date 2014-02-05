@@ -89,6 +89,7 @@ public class KMeans extends Configured implements Tool {
                     Vector<Float> vec = new Vector<Float>();
                     String[] lineArr = line.split(" ");
                     for(String s : lineArr) {
+                        System.out.println(s);
                         float f = Float.parseFloat(s);
                         vec.addElement(f);
                     }
