@@ -218,8 +218,10 @@ public class KMeans extends Configured implements Tool {
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(clustFile)));
             for(int i = 0; i < newCenter.length - 1; i++) {
                 out.print(newCenter[i]+" ");
+                System.out.print(newCenter[i]+" ");
             }
-            out.println(newCenter[newCenter.length-1]+"\n");
+            out.println(newCenter[newCenter.length-1]);
+            System.out.println(newCenter[newCenter.length-1]);
             out.close();
         }
     }
