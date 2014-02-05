@@ -68,10 +68,12 @@ public class KMeans extends Configured implements Tool {
         fs.deleteOnExit(temp);
         DistributedCache.addCacheFile(new URI(temp + "#centroids"), conf);
         DistributedCache.createSymlink(conf);
+        for(int i = 0; i < 5; i++) {
+            FileInputFormat.addInputPath(job, new Path(args[0]));
+            FileOutputFormat.setOutputPath(job, new Path(args[1]));
+            job.waitForCompletion(true);
+        }
 
-        FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
-        job.waitForCompletion(true);
         return 0;
     }
 
@@ -98,7 +100,7 @@ public class KMeans extends Configured implements Tool {
         @Override
         public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
-            //System.out.println(keys.toString());
+            System.out.println(keys.toString());
             int[] arr = {4,3};
             context.write(new IntWritable(22), new IntArrayWritable(arr));
 
