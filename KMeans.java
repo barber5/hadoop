@@ -195,20 +195,24 @@ public class KMeans extends Configured implements Tool {
 
     public static class Reduce extends Reducer<DoubleArrayWritable, DoubleArrayWritable , DoubleArrayWritable, DoubleArrayWritable > {
         static private Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
+        static private Vector<Double> costs =  new Vector<Double>();
         @Override
         public void reduce(DoubleArrayWritable key, Iterable<DoubleArrayWritable> values, Context context)
                 throws IOException, InterruptedException {
             double[] newCenter = new double[key.getData().length];
             int j = 0;
+            double cost = 0.0;
             Vector<DoubleArrayWritable> daws = new Vector<DoubleArrayWritable>();
             for(DoubleArrayWritable daw : values) {
                 j++;
                 double[] pt = daw.getData();
                 for(int i = 0; i < pt.length; i++) {
                     newCenter[i] += pt[i];
+                    cost += (pt[i]-key.getData()[i])*(pt[i]-key.getData()[i]);
                 }
                 daws.addElement(daw);
             }
+            costs.addElement(cost);
             Vector<Double> centroid = new Vector<Double>();
             for(int i = 0; i < newCenter.length; i++) {
                 newCenter[i] = newCenter[i] / j;
@@ -257,7 +261,13 @@ public class KMeans extends Configured implements Tool {
                 e.printStackTrace();
             }
             DistributedCache.createSymlink(conf);
+            double totalCost = 0.0;
+            for(Double d : costs) {
+                totalCost += d;
+            }
+            System.out.println(totalCost);
             keys.clear();
+            costs.clear();
         }
     }
 }
