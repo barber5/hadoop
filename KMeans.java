@@ -224,6 +224,7 @@ public class KMeans extends Configured implements Tool {
     public static class Reduce extends Reducer<DoubleArrayWritable, DoubleArrayWritable , DoubleArrayWritable, DoubleArrayWritable > {
         static private Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
         static private Vector<Double> costs =  new Vector<Double>();
+        static private Vector<Double> totalC =  new Vector<Double>();
         @Override
         public void reduce(DoubleArrayWritable key, Iterable<DoubleArrayWritable> values, Context context)
                 throws IOException, InterruptedException {
@@ -293,7 +294,10 @@ public class KMeans extends Configured implements Tool {
             for(Double d : costs) {
                 totalCost += d;
             }
-            System.out.println(totalCost);
+            totalC.addElement(totalCost);
+            for(Double d : totalC) {
+                System.out.println(d);
+            }
             keys.clear();
             costs.clear();
         }
