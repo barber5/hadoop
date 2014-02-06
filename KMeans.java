@@ -109,7 +109,7 @@ public class KMeans extends Configured implements Tool {
             job2.setInputFormatClass(TextInputFormat.class); // breaks into lines
             job2.setOutputFormatClass(TextOutputFormat.class);
             FileInputFormat.addInputPath(job2, new Path(args[0]));
-            FileOutputFormat.setOutputPath(job2, new Path(args[1]+i));
+            FileOutputFormat.setOutputPath(job2, new Path(args[1] + i));
             job2.getConfiguration().set("centroids", args[2]+".bin");
             job2.waitForCompletion(true);
         }
@@ -119,11 +119,12 @@ public class KMeans extends Configured implements Tool {
         return 0;
     }
     // output is centroid and the point so that the reducer gets a centroid and the list of its points
-    public static class Map extends Mapper<LongWritable, Text, DoubleArrayWritable, DoubleArrayWritable > {
+    public static class Map extends Mapper<LongWritable, Text, IntWritable, DoubleArrayWritable > {
         static private Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
-
+        static private int cost = 0;
+        static private Vector<Integer> costs = new Vector<Integer>();
         public void setup(Context context) {
-
+            cost = 0;
             Configuration conf = context.getConfiguration();
             try {
                 keys.clear();
@@ -161,23 +162,32 @@ public class KMeans extends Configured implements Tool {
                 vec.addElement(f);
             }
             System.out.println("Finding best centroid for point: "+vecStr(vec));
-            Vector<Double> centroid = keys.get(0);
+            int centroid = 0;
             Double closest = Double.MAX_VALUE;
+            int j = 0;
+            double distSq = 0.0;
             for(Vector<Double> c : keys) {
-                double distSq = 0.0;
                 for(int i = 0; i < c.size(); i++) {
                     distSq += (c.get(i) - vec.get(i))*(c.get(i) - vec.get(i));
                 }
                 if(distSq < closest) {
                     closest = distSq;
-                    centroid = c;
+                    centroid = j;
                 }
+                j++;
             }
-
+            cost += distSq;
             DoubleArrayWritable v = new DoubleArrayWritable(vec);
-            DoubleArrayWritable k = new DoubleArrayWritable(centroid);
-            System.out.println("With cost "+closest+" best centroid is "+vecStr(centroid));
+            IntWritable k = new IntWritable(centroid)
+            System.out.println("With cost "+closest+" best centroid is "+centroid);
             context.write(k, v);
+        }
+        @Override
+        public void cleanup(Context context) {
+            costs.addElement(cost);
+            for(Integer c : costs) {
+                System.out.println(c);
+            }
         }
     }
     public static class DoubleArrayWritable implements Writable,WritableComparable<DoubleArrayWritable> {
@@ -265,18 +275,19 @@ public class KMeans extends Configured implements Tool {
 
 
 
-    public static class Reduce extends Reducer<DoubleArrayWritable, DoubleArrayWritable , DoubleArrayWritable, DoubleArrayWritable > {
+    public static class Reduce extends Reducer<IntWritable, DoubleArrayWritable , DoubleArrayWritable, DoubleArrayWritable > {
         static private Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
-        static private Vector<Double> costs =  new Vector<Double>();
-        static private Vector<Double> totalC =  new Vector<Double>();
         @Override
-        public void reduce(DoubleArrayWritable key, Iterable<DoubleArrayWritable> values, Context context)
+        public void reduce(IntWritable key, Iterable<DoubleArrayWritable> values, Context context)
                 throws IOException, InterruptedException {
-            double[] newCenter = new double[key.getData().length];
+            double[] newCenter = null;
             double cost = 0.0;
             Vector<DoubleArrayWritable> daws = new Vector<DoubleArrayWritable>();
             for(DoubleArrayWritable daw : values) {
                 double[] pt = daw.getData();
+                if(newCenter == null) {
+                    newCenter = new double[pt.length];
+                }
 
                 //System.out.println("Point: "+vecStr(pt));
                 //System.out.println("Centroid: "+vecStr(key.getData()));
@@ -284,12 +295,10 @@ public class KMeans extends Configured implements Tool {
                 for(int i = 0; i < pt.length; i++) {
 
                     newCenter[i] += pt[i];
-
-                    cost += (pt[i]-key.getData()[i])*(pt[i]-key.getData()[i]);
                 }
                 daws.addElement(daw);
             }
-            costs.addElement(cost);
+
             Vector<Double> centroid = new Vector<Double>();
             for(int i = 0; i < newCenter.length; i++) {
                 if(daws.size() > 0) {
@@ -345,16 +354,8 @@ public class KMeans extends Configured implements Tool {
                 e.printStackTrace();
             }
 
-            double totalCost = 0.0;
-            for(Double d : costs) {
-                totalCost += d;
-            }
-            totalC.addElement(totalCost);
-            for(Double d : totalC) {
-                System.out.println(d);
-            }
+
             keys.clear();
-            costs.clear();
         }
     }
 }
