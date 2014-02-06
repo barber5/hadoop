@@ -129,6 +129,8 @@ public class KMeans extends Configured implements Tool {
                 double f = Double.parseDouble(s);
                 vec.addElement(f);
             }
+            System.out.println("moo\n\n\n\n\n\n\n\n");
+            System.out.println(keys.toString());
             Vector<Double> centroid = keys.get(0);
             Double closest = Double.MAX_VALUE;
             for(Vector<Double> c : keys) {
