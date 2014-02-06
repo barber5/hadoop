@@ -275,7 +275,7 @@ public class KMeans extends Configured implements Tool {
                 }
                 centroid.addElement(newCenter[i]);
             }
-            System.out.println("There are  "+daws.size()+" costing a total of "+cost+" in cluster "+vecStr(newCenter))
+            System.out.println("There are  "+daws.size()+" costing a total of "+cost+" in cluster "+vecStr(newCenter));
             DoubleArrayWritable writableCenter = new DoubleArrayWritable(newCenter);
             for(DoubleArrayWritable daw: daws) {
                 context.write(daw, writableCenter);
