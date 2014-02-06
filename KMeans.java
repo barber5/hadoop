@@ -106,6 +106,9 @@ public class KMeans extends Configured implements Tool {
             try {
                 keys.clear();
                 Path[] uris = DistributedCache.getLocalCacheFiles(conf);
+                for(Path p : uris) {
+                    System.out.println(p.toString());
+                }
                 Path uri = uris[uris.length - 1];
 
                 ObjectInputStream os = new ObjectInputStream(new FileInputStream(uri.toString()));
