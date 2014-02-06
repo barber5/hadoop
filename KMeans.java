@@ -46,7 +46,7 @@ public class KMeans extends Configured implements Tool {
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
-        job.waitForCompletion(true);
+
         job.getConfiguration().set("centroids", args[2]+".bin");
         Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
         BufferedReader br = new BufferedReader(new FileReader(args[2]));
@@ -94,6 +94,7 @@ public class KMeans extends Configured implements Tool {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        job.waitForCompletion(true);
         for(int i = 0; i < 19; i++) {
             Job job2 = new Job(job.getConfiguration(), "Kmeans");
             job2.setJarByClass(KMeans.class);
