@@ -188,7 +188,7 @@ public class KMeans extends Configured implements Tool {
             data = new double[length];
 
             for(int i = 0; i < length; i++) {
-                data[i] = in.readInt();
+                data[i] = in.readDouble();
             }
         }
 
