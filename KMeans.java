@@ -82,7 +82,8 @@ public class KMeans extends Configured implements Tool {
 
             job2.setMapperClass(Map.class);
             job2.setReducerClass(Reduce.class);
-            System.out.println(args.toString());
+            System.out.println(args[0]);
+            System.out.println(args[1]);
             job2.setInputFormatClass(TextInputFormat.class); // breaks into lines
             job2.setOutputFormatClass(TextOutputFormat.class);
             FileInputFormat.addInputPath(job2, new Path(args[0]));
