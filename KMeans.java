@@ -229,12 +229,15 @@ public class KMeans extends Configured implements Tool {
         public void reduce(DoubleArrayWritable key, Iterable<DoubleArrayWritable> values, Context context)
                 throws IOException, InterruptedException {
             double[] newCenter = new double[key.getData().length];
-            int j = 0;
+            for(int i = 0; i < newCenter.length; i++) {
+                newCenter[i] = 0.0;
+            }
             double cost = 0.0;
             Vector<DoubleArrayWritable> daws = new Vector<DoubleArrayWritable>();
             for(DoubleArrayWritable daw : values) {
-                j++;
+
                 double[] pt = daw.getData();
+                // pt is a data point for this centroid
                 for(int i = 0; i < pt.length; i++) {
                     System.out.println(pt[i]);
                     newCenter[i] += pt[i];
@@ -245,7 +248,7 @@ public class KMeans extends Configured implements Tool {
             costs.addElement(cost);
             Vector<Double> centroid = new Vector<Double>();
             for(int i = 0; i < newCenter.length; i++) {
-                newCenter[i] = newCenter[i] / j;
+                newCenter[i] = newCenter[i] / daws.size();
                 System.out.println(newCenter[i]);
                 centroid.addElement(newCenter[i]);
             }
