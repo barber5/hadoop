@@ -136,6 +136,7 @@ public class KMeans extends Configured implements Tool {
                 double f = Double.parseDouble(s);
                 vec.addElement(f);
             }
+            System.out.println("Finding best centroid for point: "+vecStr(vec));
             Vector<Double> centroid = keys.get(0);
             Double closest = Double.MAX_VALUE;
             for(Vector<Double> c : keys) {
@@ -148,6 +149,7 @@ public class KMeans extends Configured implements Tool {
                     centroid = c;
                 }
             }
+            System.out.println("With cost "+closest+" best centroid is "+vecStr(centroid));
             DoubleArrayWritable v = new DoubleArrayWritable(vec);
             DoubleArrayWritable k = new DoubleArrayWritable(centroid);
             context.write(k, v);
@@ -250,8 +252,9 @@ public class KMeans extends Configured implements Tool {
             Vector<DoubleArrayWritable> daws = new Vector<DoubleArrayWritable>();
             for(DoubleArrayWritable daw : values) {
                 double[] pt = daw.getData();
-                System.out.println("Point: "+vecStr(pt));
-                System.out.println("Centroid: "+vecStr(key.getData()));
+
+                //System.out.println("Point: "+vecStr(pt));
+                //System.out.println("Centroid: "+vecStr(key.getData()));
                 // pt is a data point for this centroid
                 for(int i = 0; i < pt.length; i++) {
 
@@ -297,6 +300,7 @@ public class KMeans extends Configured implements Tool {
             }
             try {
                 os.writeObject(keys);
+                /*
                 System.out.println("writing centroids\n\n\n");
                 for(Vector<Double> vd : keys) {
                     System.out.print("centroid: ");
@@ -304,7 +308,7 @@ public class KMeans extends Configured implements Tool {
                         System.out.print(d+" ");
                     }
                     System.out.println();
-                }
+                }*/
             } catch (IOException e) {
                 e.printStackTrace();
             }
