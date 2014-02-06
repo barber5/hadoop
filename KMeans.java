@@ -68,7 +68,7 @@ public class KMeans extends Configured implements Tool {
             e.printStackTrace();
         }
         ObjectOutputStream os = null;
-        String temp = job.getConfiguration().get("centroids")+".bin";
+        String temp = job.getConfiguration().get("centroids");
         try {
             os = new ObjectOutputStream(fs.create(new Path(temp)));
         } catch (IOException e) {
