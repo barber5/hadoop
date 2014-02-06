@@ -109,7 +109,7 @@ public class KMeans extends Configured implements Tool {
                 for(int i = 0; i < 20; i++) {
                     System.out.println("here comes the cache");
                 }
-                System.out.println(uris.toString());
+                System.out.println(uris.length);
                 Path uri = uris[0];
 
                 ObjectInputStream os = new ObjectInputStream(new FileInputStream(uri.toString()));
