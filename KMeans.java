@@ -134,7 +134,9 @@ public class KMeans extends Configured implements Tool {
             Vector<Double> vec = new Vector<Double>();
             String[] lineArr = value.toString().split(" ");
             for(String s : lineArr) {
+                System.out.println(s);
                 double f = Double.parseDouble(s);
+                System.out.println(f);
                 vec.addElement(f);
             }
             Vector<Double> centroid = keys.get(0);
@@ -235,10 +237,7 @@ public class KMeans extends Configured implements Tool {
                 double[] pt = daw.getData();
                 // pt is a data point for this centroid
                 for(int i = 0; i < pt.length; i++) {
-                    System.out.println(newCenter[i]);
-                    System.out.println("+ "+pt[i]);
                     newCenter[i] += pt[i];
-                    System.out.println("= "+newCenter[i]);
                     cost += (pt[i]-key.getData()[i])*(pt[i]-key.getData()[i]);
                 }
                 daws.addElement(daw);
