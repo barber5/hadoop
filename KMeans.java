@@ -1,16 +1,14 @@
 package co.brbr5.app;
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
+
 import java.util.Arrays;
 
-import java.util.UUID;
+
 import java.util.Vector;
 
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Job;
@@ -48,32 +46,6 @@ public class KMeans extends Configured implements Tool {
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
-
-        Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
-        BufferedReader br = new BufferedReader(new FileReader(args[2]));
-        String line = br.readLine();
-        while(line != null) {
-            Vector<Double> vec = new Vector<Double>();
-            String[] lineArr = line.split(" ");
-            for(String s : lineArr) {
-                double f = Double.parseDouble(s);
-                vec.addElement(f);
-            }
-            keys.addElement(vec);
-            line = br.readLine();
-        }
-        File file = new File(args[2]);
-        file.delete();
-        Configuration conf = job.getConfiguration();
-        conf.set("centroids", args[2]);
-        FileSystem fs = FileSystem.get(conf);
-        Path temp = new Path("tmp/", UUID.randomUUID().toString());
-        ObjectOutputStream os = new ObjectOutputStream(fs.create(temp));
-        os.writeObject(keys);
-        os.close();
-        fs.deleteOnExit(temp);
-        DistributedCache.addCacheFile(new URI(temp + "#centroids"), conf);
-        DistributedCache.createSymlink(conf);
         job.waitForCompletion(true);
         for(int i = 0; i < 19; i++) {
             Job job2 = new Job(job.getConfiguration(), "Kmeans");
