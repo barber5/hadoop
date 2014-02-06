@@ -106,20 +106,19 @@ public class KMeans extends Configured implements Tool {
             try {
                 keys.clear();
                 Path[] uris = DistributedCache.getLocalCacheFiles(conf);
-                /*for(int i = 0; i < 20; i++) {
-                    System.out.println("here comes the cache");
-
-                }
-                System.out.println(uris.length);
-                for(int j = 0; j < uris.length; j++) {
-                    System.out.println(uris[j].toString());
-                }*/
-
                 Path uri = uris[uris.length - 1];
 
                 ObjectInputStream os = new ObjectInputStream(new FileInputStream(uri.toString()));
                 try {
                     keys = (Vector<Vector<Double>>) os.readObject();
+                    System.out.println("new centroids coming up\n\n\n");
+                    for(Vector<Double> vd : keys) {
+                        System.out.print("centroid: ");
+                        for(Double d : vd) {
+                            System.out.print(d+" ");
+                        }
+                        System.out.println();
+                    }
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -189,7 +188,7 @@ public class KMeans extends Configured implements Tool {
             data = new double[length];
 
             for(int i = 0; i < length; i++) {
-                data[i] = in.readDouble();
+                data[i] = in.readInt();
             }
         }
 
@@ -235,7 +234,9 @@ public class KMeans extends Configured implements Tool {
                 double[] pt = daw.getData();
                 // pt is a data point for this centroid
                 for(int i = 0; i < pt.length; i++) {
+
                     newCenter[i] += pt[i];
+
                     cost += (pt[i]-key.getData()[i])*(pt[i]-key.getData()[i]);
                 }
                 daws.addElement(daw);
@@ -275,6 +276,14 @@ public class KMeans extends Configured implements Tool {
             }
             try {
                 os.writeObject(keys);
+                System.out.println("writing centroids\n\n\n");
+                for(Vector<Double> vd : keys) {
+                    System.out.print("centroid: ");
+                    for(Double d : vd) {
+                        System.out.print(d+" ");
+                    }
+                    System.out.println();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
