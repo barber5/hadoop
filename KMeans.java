@@ -95,8 +95,9 @@ public class KMeans extends Configured implements Tool {
             e.printStackTrace();
         }
         job.waitForCompletion(true);
+
         for(int i = 0; i < 19; i++) {
-            Job job2 = new Job(job.getConfiguration(), "Kmeans");
+            Job job2 = new Job(new Configuration(), "Kmeans");
             job2.setJarByClass(KMeans.class);
             job2.setOutputKeyClass(DoubleArrayWritable.class);
             job2.setOutputValueClass(DoubleArrayWritable.class);
@@ -109,8 +110,8 @@ public class KMeans extends Configured implements Tool {
             job2.setOutputFormatClass(TextOutputFormat.class);
             FileInputFormat.addInputPath(job2, new Path(args[0]));
             FileOutputFormat.setOutputPath(job2, new Path(args[1]+i));
+            job2.getConfiguration().set("centroids", args[2]+".bin");
             job2.waitForCompletion(true);
-            job = job2;
         }
 
 
@@ -172,9 +173,10 @@ public class KMeans extends Configured implements Tool {
                     centroid = c;
                 }
             }
-            System.out.println("With cost "+closest+" best centroid is "+vecStr(centroid));
+
             DoubleArrayWritable v = new DoubleArrayWritable(vec);
             DoubleArrayWritable k = new DoubleArrayWritable(centroid);
+            System.out.println("With cost "+closest+" best centroid is "+vecStr(centroid));
             context.write(k, v);
         }
     }
