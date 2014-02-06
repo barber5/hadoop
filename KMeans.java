@@ -143,6 +143,7 @@ public class KMeans extends Configured implements Tool {
                 double distSq = 0.0;
                 for(int i = 0; i < c.size(); i++) {
                     distSq += (c.get(i) - vec.get(i))*(c.get(i) - vec.get(i));
+                    System.out.println(c.get(i));
                 }
                 if(distSq < closest) {
                     closest = distSq;
@@ -236,7 +237,6 @@ public class KMeans extends Configured implements Tool {
                 j++;
                 double[] pt = daw.getData();
                 for(int i = 0; i < pt.length; i++) {
-                    System.out.println(pt[i]);
                     newCenter[i] += pt[i];
                     cost += (pt[i]-key.getData()[i])*(pt[i]-key.getData()[i]);
                 }
