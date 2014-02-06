@@ -106,10 +106,13 @@ public class KMeans extends Configured implements Tool {
             Configuration conf = context.getConfiguration();
             try {
                 keys.clear();
+                Path[] uris = DistributedCache.getLocalCacheFiles(conf);
+                for(Path p : uris) {
+                    System.out.println(p.toString());
+                }
+                Path uri = uris[uris.length - 1];
 
-                String centroids = conf.get("centroids");
-
-                ObjectInputStream os = new ObjectInputStream(new FileInputStream(centroids));
+                ObjectInputStream os = new ObjectInputStream(new FileInputStream(uri.toString()));
                 try {
                     keys = (Vector<Vector<Double>>) os.readObject();
                     System.out.println("new centroids coming up\n\n\n");
@@ -293,14 +296,13 @@ public class KMeans extends Configured implements Tool {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            Path temp = new Path("tmp/", UUID.randomUUID().toString());
             ObjectOutputStream os = null;
-            String temp = conf.get("centroids");
             try {
-                os = new ObjectOutputStream(fs.create(new Path(temp)));
+                os = new ObjectOutputStream(fs.create(temp));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             try {
                 os.writeObject(keys);
 
@@ -320,7 +322,17 @@ public class KMeans extends Configured implements Tool {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+            try {
+                fs.deleteOnExit(temp);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                DistributedCache.addCacheFile(new URI(temp + "#centroids"), conf);
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+            DistributedCache.createSymlink(conf);
             double totalCost = 0.0;
             for(Double d : costs) {
                 totalCost += d;
