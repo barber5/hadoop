@@ -245,7 +245,6 @@ public class KMeans extends Configured implements Tool {
             for(int i = 0; i < newCenter.length; i++) {
                 if(daws.size() > 0) {
                     newCenter[i] = newCenter[i] / daws.size();
-                    System.out.println(newCenter[i]);
                 }
                 else {
                     newCenter[i] = 0.0;
