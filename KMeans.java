@@ -251,7 +251,7 @@ public class KMeans extends Configured implements Tool {
                     newCenter[i] = 0.0;
                 }
 
-                System.out.println(newCenter[i]);
+                //System.out.println(newCenter[i]);
                 centroid.addElement(newCenter[i]);
             }
             DoubleArrayWritable writableCenter = new DoubleArrayWritable(newCenter);
