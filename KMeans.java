@@ -106,14 +106,14 @@ public class KMeans extends Configured implements Tool {
             try {
                 keys.clear();
                 Path[] uris = DistributedCache.getLocalCacheFiles(conf);
-                for(int i = 0; i < 20; i++) {
+                /*for(int i = 0; i < 20; i++) {
                     System.out.println("here comes the cache");
 
                 }
                 System.out.println(uris.length);
                 for(int j = 0; j < uris.length; j++) {
                     System.out.println(uris[j].toString());
-                }
+                }*/
 
                 Path uri = uris[uris.length - 1];
 
