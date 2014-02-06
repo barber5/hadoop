@@ -250,6 +250,8 @@ public class KMeans extends Configured implements Tool {
             Vector<DoubleArrayWritable> daws = new Vector<DoubleArrayWritable>();
             for(DoubleArrayWritable daw : values) {
                 double[] pt = daw.getData();
+                System.out.println("Point: "+vecStr(pt));
+                System.out.println("Centroid: "+vecStr(key.getData()));
                 // pt is a data point for this centroid
                 for(int i = 0; i < pt.length; i++) {
 
