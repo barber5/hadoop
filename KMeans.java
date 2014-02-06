@@ -235,7 +235,7 @@ public class KMeans extends Configured implements Tool {
                 double[] pt = daw.getData();
                 // pt is a data point for this centroid
                 for(int i = 0; i < pt.length; i++) {
-                    System.out.println(pt[i]);
+
                     newCenter[i] += pt[i];
                     cost += (pt[i]-key.getData()[i])*(pt[i]-key.getData()[i]);
                 }
