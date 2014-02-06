@@ -35,7 +35,6 @@ public class KMeans extends Configured implements Tool {
     public int run(String[] args) throws Exception {
         System.out.println(Arrays.toString(args));
 
-
         Job job = new Job(new Configuration(), "Kmeans");
         job.setJarByClass(KMeans.class);
         job.setOutputKeyClass(DoubleArrayWritable.class);
@@ -50,11 +49,6 @@ public class KMeans extends Configured implements Tool {
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
-
-
-        for(int i = 0; i < 20; i++) {
-            System.out.println(i);
-        }
         Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
         BufferedReader br = new BufferedReader(new FileReader(args[2]));
         String line = br.readLine();
@@ -79,11 +73,23 @@ public class KMeans extends Configured implements Tool {
         fs.deleteOnExit(temp);
         DistributedCache.addCacheFile(new URI(temp + "#centroids"), conf);
         DistributedCache.createSymlink(conf);
-
-
-
-
         job.waitForCompletion(true);
+        for(int i = 0; i < 19; i++) {
+            Job job2 = new Job(job.getConfiguration(), "Kmeans");
+            job2.setJarByClass(KMeans.class);
+            job2.setOutputKeyClass(DoubleArrayWritable.class);
+            job2.setOutputValueClass(DoubleArrayWritable.class);
+
+            job2.setMapperClass(Map.class);
+            job2.setReducerClass(Reduce.class);
+
+            job2.setInputFormatClass(TextInputFormat.class); // breaks into lines
+            job2.setOutputFormatClass(TextOutputFormat.class);
+            FileInputFormat.addInputPath(job2, new Path(args[0]));
+            FileOutputFormat.setOutputPath(job2, new Path(args[1]));
+            job2.waitForCompletion(true);
+        }
+
 
 
         return 0;
@@ -96,12 +102,8 @@ public class KMeans extends Configured implements Tool {
 
             Configuration conf = context.getConfiguration();
             try {
-                keys.clear();                
+                keys.clear();
                 Path uri = DistributedCache.getLocalCacheFiles(conf)[0];
-
-                for(int i = 0; i < 20; i++) {
-                    System.out.println(i);
-                }
                 ObjectInputStream os = new ObjectInputStream(new FileInputStream(uri.toString()));
                 try {
                     keys = (Vector<Vector<Double>>) os.readObject();
