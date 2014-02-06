@@ -47,7 +47,7 @@ public class KMeans extends Configured implements Tool {
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         job.waitForCompletion(true);
-        job.getConfiguration().set("centroids", args[2]);
+        job.getConfiguration().set("centroids", args[2]+".bin");
         Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
         BufferedReader br = new BufferedReader(new FileReader(args[2]));
         String line = br.readLine();
@@ -61,8 +61,6 @@ public class KMeans extends Configured implements Tool {
             keys.addElement(vec);
             line = br.readLine();
         }
-        File file = new File(args[2]);
-        file.delete();
         FileSystem fs = null;
         try {
             fs = FileSystem.get(job.getConfiguration());
@@ -70,7 +68,7 @@ public class KMeans extends Configured implements Tool {
             e.printStackTrace();
         }
         ObjectOutputStream os = null;
-        String temp = job.getConfiguration().get("centroids");
+        String temp = job.getConfiguration().get("centroids")+".bin";
         try {
             os = new ObjectOutputStream(fs.create(new Path(temp)));
         } catch (IOException e) {
@@ -129,7 +127,9 @@ public class KMeans extends Configured implements Tool {
                 keys.clear();
 
                 String centroids = conf.get("centroids");
-
+                for(int i = 0; i < 20; i++) {
+                    System.out.println(centroids);
+                }
                 ObjectInputStream os = new ObjectInputStream(new FileInputStream(centroids));
                 try {
                     keys = (Vector<Vector<Double>>) os.readObject();
