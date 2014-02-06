@@ -103,7 +103,13 @@ public class KMeans extends Configured implements Tool {
             Configuration conf = context.getConfiguration();
             try {
                 keys.clear();
+                Path[] uris = DistributedCache.getLocalCacheArchives(conf);
+                for(int i = 0; i < 20; i++) {
+                    System.out.println("here comes the cache");
+                    System.out.println(uris.toString());
+                }
                 Path uri = DistributedCache.getLocalCacheFiles(conf)[0];
+                System.out.println(uri.toString());
                 ObjectInputStream os = new ObjectInputStream(new FileInputStream(uri.toString()));
                 try {
                     keys = (Vector<Vector<Double>>) os.readObject();
