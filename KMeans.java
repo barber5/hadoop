@@ -218,6 +218,24 @@ public class KMeans extends Configured implements Tool {
         }
     }
 
+    public static String vecStr(Vector<Double> vd) {
+        String result = "[ ";
+        for(Double d: vd) {
+            result += d +" ";
+        }
+        result += "]";
+        return result;
+    }
+
+    public static String vecStr(double[] vd) {
+        String result = "[ ";
+        for(Double d: vd) {
+            result += d +" ";
+        }
+        result += "]";
+        return result;
+    }
+
 
 
     public static class Reduce extends Reducer<DoubleArrayWritable, DoubleArrayWritable , DoubleArrayWritable, DoubleArrayWritable > {
@@ -241,6 +259,7 @@ public class KMeans extends Configured implements Tool {
                 }
                 daws.addElement(daw);
             }
+            System.out.println("Cost for "+vecStr(key.getData())+" is "+cost);
             costs.addElement(cost);
             Vector<Double> centroid = new Vector<Double>();
             for(int i = 0; i < newCenter.length; i++) {
