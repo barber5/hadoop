@@ -86,7 +86,7 @@ public class KMeans extends Configured implements Tool {
             job2.setInputFormatClass(TextInputFormat.class); // breaks into lines
             job2.setOutputFormatClass(TextOutputFormat.class);
             FileInputFormat.addInputPath(job2, new Path(args[0]));
-            FileOutputFormat.setOutputPath(job2, new Path(args[1]));
+            FileOutputFormat.setOutputPath(job2, new Path(args[1]+"/i"));
             job2.waitForCompletion(true);
         }
 
