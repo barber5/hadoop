@@ -280,6 +280,7 @@ public class KMeans extends Configured implements Tool {
             for(DoubleArrayWritable daw: daws) {
                 context.write(daw, writableCenter);
             }
+            keys.addElement(centroid);
 
         }
         @Override
@@ -300,7 +301,7 @@ public class KMeans extends Configured implements Tool {
             }
             try {
                 os.writeObject(keys);
-                /*
+
                 System.out.println("writing centroids\n\n\n");
                 for(Vector<Double> vd : keys) {
                     System.out.print("centroid: ");
@@ -308,7 +309,7 @@ public class KMeans extends Configured implements Tool {
                         System.out.print(d+" ");
                     }
                     System.out.println();
-                }*/
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
