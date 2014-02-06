@@ -264,7 +264,6 @@ public class KMeans extends Configured implements Tool {
                 }
                 daws.addElement(daw);
             }
-            System.out.println("Cost for "+vecStr(key.getData())+" is "+cost);
             costs.addElement(cost);
             Vector<Double> centroid = new Vector<Double>();
             for(int i = 0; i < newCenter.length; i++) {
@@ -276,6 +275,7 @@ public class KMeans extends Configured implements Tool {
                 }
                 centroid.addElement(newCenter[i]);
             }
+            System.out.println("There are  "+daws.size()+" costing a total of "+cost+" in cluster "+vecStr(newCenter))
             DoubleArrayWritable writableCenter = new DoubleArrayWritable(newCenter);
             for(DoubleArrayWritable daw: daws) {
                 context.write(daw, writableCenter);
