@@ -178,7 +178,7 @@ public class KMeans extends Configured implements Tool {
             }
             cost += distSq;
             DoubleArrayWritable v = new DoubleArrayWritable(vec);
-            IntWritable k = new IntWritable(centroid)
+            IntWritable k = new IntWritable(centroid);
             System.out.println("With cost "+closest+" best centroid is "+centroid);
             context.write(k, v);
         }
