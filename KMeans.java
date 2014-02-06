@@ -48,6 +48,54 @@ public class KMeans extends Configured implements Tool {
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         job.waitForCompletion(true);
         job.getConfiguration().set("centroids", args[2]);
+        Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
+        BufferedReader br = new BufferedReader(new FileReader(args[2]));
+        String line = br.readLine();
+        while(line != null) {
+            Vector<Double> vec = new Vector<Double>();
+            String[] lineArr = line.split(" ");
+            for(String s : lineArr) {
+                double f = Double.parseDouble(s);
+                vec.addElement(f);
+            }
+            keys.addElement(vec);
+            line = br.readLine();
+        }
+        File file = new File(args[2]);
+        file.delete();
+        FileSystem fs = null;
+        try {
+            fs = FileSystem.get(job.getConfiguration());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ObjectOutputStream os = null;
+        String temp = job.getConfiguration().get("centroids");
+        try {
+            os = new ObjectOutputStream(fs.create(new Path(temp)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            os.writeObject(keys);
+
+            System.out.println("writing centroids\n\n\n");
+            for(Vector<Double> vd : keys) {
+                System.out.print("centroid: ");
+                for(Double d : vd) {
+                    System.out.print(d+" ");
+                }
+                System.out.println();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         for(int i = 0; i < 19; i++) {
             Job job2 = new Job(job.getConfiguration(), "Kmeans");
             job2.setJarByClass(KMeans.class);
