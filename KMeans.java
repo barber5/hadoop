@@ -181,7 +181,7 @@ public class KMeans extends Configured implements Tool {
             cost += finalDist;
             DoubleArrayWritable v = new DoubleArrayWritable(vec);
             DoubleArrayWritable k = new DoubleArrayWritable(centroid);
-            System.out.println("With cost "+finalDist+" best centroid is "+centroid);
+            System.out.println("With cost "+finalDist+" best centroid is "+centroid.get(centroid.size()-2));
             context.write(k, v);
         }
         @Override
