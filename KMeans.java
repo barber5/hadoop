@@ -171,6 +171,7 @@ public class KMeans extends Configured implements Tool {
                 for(int i = 0; i < c.size(); i++) {
                     distSq += (c.get(i) - vec.get(i))*(c.get(i) - vec.get(i));
                 }
+                System.out.println("Dist: "+distSq);
                 if(distSq < closest) {
                     closest = distSq;
                     centroid = c;
