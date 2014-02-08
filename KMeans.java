@@ -206,8 +206,10 @@ public class KMeans extends Configured implements Tool {
             double cost = 0.0;
             System.out.println("reducing: "+key.getData()[key.getData().length - 2]);
             Vector<DoubleArrayWritable> daws = new Vector<DoubleArrayWritable>();
+            Vector<double[]> pts = new Vector<double[]>();
             for(DoubleArrayWritable daw : values) {
                 double[] pt = daw.getData();
+                pts.add(pt);
                 if(newCenter == null) {
                     newCenter = new double[pt.length];
                 }
@@ -233,8 +235,8 @@ public class KMeans extends Configured implements Tool {
             }
             System.out.println("There are  "+daws.size()+" costing a total of "+cost+" in cluster "+vecStr(newCenter)+" which was formerly cluster "+vecStr(key.getData()));
             DoubleArrayWritable writableCenter = new DoubleArrayWritable(newCenter);
-            for(DoubleArrayWritable daw: daws) {
-                context.write(daw, writableCenter);
+            for(double[] pt : pts) {
+                context.write(new DoubleArrayWritable(pt), writableCenter);
             }
             keys.addElement(centroid);
 
