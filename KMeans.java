@@ -243,6 +243,7 @@ public class KMeans extends Configured implements Tool {
 
         @Override
         public int compareTo(DoubleArrayWritable o) {
+            System.out.println(o.getData().length);
             if(o.getData().length != this.getData().length) {
                 return o.getData().length - this.getData().length;
             }
