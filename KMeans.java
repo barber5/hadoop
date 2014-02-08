@@ -164,9 +164,10 @@ public class KMeans extends Configured implements Tool {
             Double closest = Double.MAX_VALUE;
             Vector<Double> centroid = keys.get(0);
             int j = 0;
-            double distSq = 0.0;
+            double finalDist = 0.0;
             for(Vector<Double> c : keys) {
                 //System.out.println("considering....."+c.toString());
+                double distSq = 0.0;
                 for(int i = 0; i < c.size(); i++) {
                     distSq += (c.get(i) - vec.get(i))*(c.get(i) - vec.get(i));
                 }
@@ -174,11 +175,12 @@ public class KMeans extends Configured implements Tool {
                 if(distSq < closest) {
                     //System.out.println("new min!");
                     closest = distSq;
+                    finalDist = distSq;
                     centroid = c;
                 }
                 j++;
             }
-            cost += distSq;
+            cost += finalDist;
             DoubleArrayWritable v = new DoubleArrayWritable(vec);
             DoubleArrayWritable k = new DoubleArrayWritable(centroid);
             System.out.println("With cost "+closest+" best centroid is "+centroid);
