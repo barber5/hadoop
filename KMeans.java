@@ -119,7 +119,7 @@ public class KMeans extends Configured implements Tool {
         return 0;
     }
     // output is centroid and the point so that the reducer gets a centroid and the list of its points
-    public static class Map extends Mapper<LongWritable, Text, IntWritable, DoubleArrayWritable > {
+    public static class Map extends Mapper<LongWritable, Text, DoubleArrayWritable, DoubleArrayWritable > {
         static private Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
         static private int cost = 0;
         static private Vector<Integer> costs = new Vector<Integer>();
@@ -162,8 +162,8 @@ public class KMeans extends Configured implements Tool {
                 vec.addElement(f);
             }
             System.out.println("Finding best centroid for point: "+vecStr(vec));
-            int centroid = 0;
             Double closest = Double.MAX_VALUE;
+            Vector<Double> centroid = keys.get(0);
             int j = 0;
             double distSq = 0.0;
             for(Vector<Double> c : keys) {
@@ -172,13 +172,13 @@ public class KMeans extends Configured implements Tool {
                 }
                 if(distSq < closest) {
                     closest = distSq;
-                    centroid = j;
+                    centroid = c;
                 }
                 j++;
             }
             cost += distSq;
             DoubleArrayWritable v = new DoubleArrayWritable(vec);
-            IntWritable k = new IntWritable(centroid);
+            DoubleArrayWritable k = new DoubleArrayWritable(centroid);
             System.out.println("With cost "+closest+" best centroid is "+centroid);
             context.write(k, v);
         }
