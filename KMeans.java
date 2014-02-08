@@ -95,6 +95,7 @@ public class KMeans extends Configured implements Tool {
         }
         job.waitForCompletion(true);
 
+        /*
         for(int i = 0; i < 19; i++) {
             Job job2 = new Job(new Configuration(), "Kmeans");
             job2.setJarByClass(KMeans.class);
@@ -111,7 +112,7 @@ public class KMeans extends Configured implements Tool {
             FileOutputFormat.setOutputPath(job2, new Path(args[1] + i));
             job2.getConfiguration().set("centroids", args[2]+".bin");
             job2.waitForCompletion(true);
-        }
+        }*/
 
 
 
