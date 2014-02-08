@@ -163,7 +163,6 @@ public class KMeans extends Configured implements Tool {
             //System.out.println("Finding best centroid for point: "+vecStr(vec));
             Double closest = Double.MAX_VALUE;
             Vector<Double> centroid = keys.get(0);
-            int j = 0;
             double finalDist = 0.0;
             for(Vector<Double> c : keys) {
                 //System.out.println("considering....."+c.toString());
@@ -178,12 +177,11 @@ public class KMeans extends Configured implements Tool {
                     finalDist = distSq;
                     centroid = c;
                 }
-                j++;
             }
             cost += finalDist;
             DoubleArrayWritable v = new DoubleArrayWritable(vec);
             DoubleArrayWritable k = new DoubleArrayWritable(centroid);
-            //System.out.println("With cost "+closest+" best centroid is "+centroid);
+            System.out.println("With cost "+finalDist+" best centroid is "+centroid);
             context.write(k, v);
         }
         @Override
@@ -192,6 +190,92 @@ public class KMeans extends Configured implements Tool {
             for(Integer c : costs) {
                 System.out.println(c);
             }
+        }
+    }
+
+
+
+
+    public static class Reduce extends Reducer<DoubleArrayWritable, DoubleArrayWritable , DoubleArrayWritable, DoubleArrayWritable > {
+        static private Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
+        @Override
+        public void reduce(DoubleArrayWritable key, Iterable<DoubleArrayWritable> values, Context context)
+                throws IOException, InterruptedException {
+            double[] newCenter = null;
+            double cost = 0.0;
+            Vector<DoubleArrayWritable> daws = new Vector<DoubleArrayWritable>();
+            for(DoubleArrayWritable daw : values) {
+                double[] pt = daw.getData();
+                if(newCenter == null) {
+                    newCenter = new double[pt.length];
+                }
+                //System.out.println("Point: "+vecStr(pt));
+                //System.out.println("Centroid: "+vecStr(key.getData()));
+                // pt is a data point for this centroid
+                for(int i = 0; i < pt.length; i++) {
+
+                    newCenter[i] += pt[i];
+                }
+                daws.addElement(daw);
+            }
+
+            Vector<Double> centroid = new Vector<Double>();
+            for(int i = 0; i < newCenter.length; i++) {
+                if(daws.size() > 0) {
+                    newCenter[i] = newCenter[i] / daws.size();
+                }
+                else {
+                    newCenter[i] = 0.0;
+                }
+                centroid.addElement(newCenter[i]);
+            }
+            System.out.println("There are  "+daws.size()+" costing a total of "+cost+" in cluster "+vecStr(newCenter)+" which was formerly cluster "+vecStr(key.getData()));
+            DoubleArrayWritable writableCenter = new DoubleArrayWritable(newCenter);
+            for(DoubleArrayWritable daw: daws) {
+                context.write(daw, writableCenter);
+            }
+            keys.addElement(centroid);
+
+        }
+        @Override
+        public void cleanup(Context context) {
+            Configuration conf = context.getConfiguration();
+            FileSystem fs = null;
+            try {
+                fs = FileSystem.get(conf);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            ObjectOutputStream os = null;
+            String temp = conf.get("centroids");
+            try {
+                os = new ObjectOutputStream(fs.create(new Path(temp)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                os.writeObject(keys);
+
+                System.out.println("writing centroids\n\n\n");
+                for(Vector<Double> vd : keys) {
+                    System.out.print("centroid: ");
+                    for(Double d : vd) {
+                        System.out.print(d+" ");
+                    }
+                    System.out.println();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            keys.clear();
         }
     }
     public static class DoubleArrayWritable implements Writable,WritableComparable<DoubleArrayWritable> {
@@ -282,91 +366,5 @@ public class KMeans extends Configured implements Tool {
         }
         result += "]";
         return result;
-    }
-
-
-
-    public static class Reduce extends Reducer<DoubleArrayWritable, DoubleArrayWritable , DoubleArrayWritable, DoubleArrayWritable > {
-        static private Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
-        @Override
-        public void reduce(DoubleArrayWritable key, Iterable<DoubleArrayWritable> values, Context context)
-                throws IOException, InterruptedException {
-            double[] newCenter = null;
-            double cost = 0.0;
-            Vector<DoubleArrayWritable> daws = new Vector<DoubleArrayWritable>();
-            for(DoubleArrayWritable daw : values) {
-                double[] pt = daw.getData();
-                if(newCenter == null) {
-                    newCenter = new double[pt.length];
-                }
-
-                //System.out.println("Point: "+vecStr(pt));
-                //System.out.println("Centroid: "+vecStr(key.getData()));
-                // pt is a data point for this centroid
-                for(int i = 0; i < pt.length; i++) {
-
-                    newCenter[i] += pt[i];
-                }
-                daws.addElement(daw);
-            }
-
-            Vector<Double> centroid = new Vector<Double>();
-            for(int i = 0; i < newCenter.length; i++) {
-                if(daws.size() > 0) {
-                    newCenter[i] = newCenter[i] / daws.size();
-                }
-                else {
-                    newCenter[i] = 0.0;
-                }
-                centroid.addElement(newCenter[i]);
-            }
-            System.out.println("There are  "+daws.size()+" costing a total of "+cost+" in cluster "+vecStr(newCenter)+" which was formerly cluster "+vecStr(key.getData()));
-            DoubleArrayWritable writableCenter = new DoubleArrayWritable(newCenter);
-            for(DoubleArrayWritable daw: daws) {
-                context.write(daw, writableCenter);
-            }
-            keys.addElement(centroid);
-
-        }
-        @Override
-        public void cleanup(Context context) {
-            Configuration conf = context.getConfiguration();
-            FileSystem fs = null;
-            try {
-                fs = FileSystem.get(conf);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            ObjectOutputStream os = null;
-            String temp = conf.get("centroids");
-            try {
-                os = new ObjectOutputStream(fs.create(new Path(temp)));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                os.writeObject(keys);
-
-                System.out.println("writing centroids\n\n\n");
-                for(Vector<Double> vd : keys) {
-                    System.out.print("centroid: ");
-                    for(Double d : vd) {
-                        System.out.print(d+" ");
-                    }
-                    System.out.println();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                os.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            keys.clear();
-        }
     }
 }
