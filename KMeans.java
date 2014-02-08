@@ -138,7 +138,7 @@ public class KMeans extends Configured implements Tool {
                     keys = (Vector<Vector<Double>>) os.readObject();
                     System.out.println("new centroids coming up\n\n\n");
                     for(Vector<Double> vd : keys) {
-                        System.out.print("centroid: ");
+                        //System.out.print("centroid: ");
                         for(Double d : vd) {
                             System.out.print(d+" ");
                         }
@@ -161,17 +161,17 @@ public class KMeans extends Configured implements Tool {
                 double f = Double.parseDouble(s);
                 vec.addElement(f);
             }
-            System.out.println("Finding best centroid for point: "+vecStr(vec));
+            //System.out.println("Finding best centroid for point: "+vecStr(vec));
             Double closest = Double.MAX_VALUE;
             Vector<Double> centroid = keys.get(0);
             int j = 0;
             double distSq = 0.0;
             for(Vector<Double> c : keys) {
-                System.out.println("considering....."+c.toString());
+                //System.out.println("considering....."+c.toString());
                 for(int i = 0; i < c.size(); i++) {
                     distSq += (c.get(i) - vec.get(i))*(c.get(i) - vec.get(i));
                 }
-                System.out.println("Dist: "+distSq);
+                //System.out.println("Dist: "+distSq);
                 if(distSq < closest) {
                     closest = distSq;
                     centroid = c;
@@ -181,7 +181,7 @@ public class KMeans extends Configured implements Tool {
             cost += distSq;
             DoubleArrayWritable v = new DoubleArrayWritable(vec);
             DoubleArrayWritable k = new DoubleArrayWritable(centroid);
-            System.out.println("With cost "+closest+" best centroid is "+centroid);
+            //System.out.println("With cost "+closest+" best centroid is "+centroid);
             context.write(k, v);
         }
         @Override
