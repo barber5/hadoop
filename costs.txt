@@ -18,3 +18,25 @@
 [ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 456401899
 [ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 456175503
 [ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 455984591
+
+
+438745437
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 249801643
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 194492505
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 169802592
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 156293459
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 149091910
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 142506236
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 132301622
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 117168711
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 108545091
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 102234922
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 98275677
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 95627978
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 93791002
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 92374815
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 91539349
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 91043261
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 90749936
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 90467844
+[ubuntu@ec2-54-193-4-104.us-west-1.compute.amazonaws.com] out: 90214141
