@@ -282,19 +282,15 @@ public class KMeans extends Configured implements Tool {
     }
     public static class DoubleArrayWritable implements Writable,WritableComparable<DoubleArrayWritable> {
         private double[] data;
-        private int id;
         public DoubleArrayWritable() {
             this.data = new double[0];
-            this.id = 0;
         }
         public DoubleArrayWritable(double[] data, int id) {
             this.data = data;
-            this.id = id;
         }
 
-        public DoubleArrayWritable(Vector<Double> vec, int id) {
+        public DoubleArrayWritable(Vector<Double> vec) {
             data = new double[vec.size()];
-            this.id = id;
             for(int i = 0 ; i < vec.size(); i++) {
                 data[i] = vec.get(i);
             }
@@ -308,7 +304,6 @@ public class KMeans extends Configured implements Tool {
         }
         public void write(DataOutput out) throws IOException {
             out.writeInt(data.length);
-            out.writeInt(this.id);
             for(int i = 0; i < data.length; i++) {
                 out.writeDouble(data[i]);
             }
@@ -316,7 +311,6 @@ public class KMeans extends Configured implements Tool {
 
         public void readFields(DataInput in) throws IOException {
             int length = in.readInt();
-            this.id = in.readInt();
 
             data = new double[length];
 
@@ -329,7 +323,7 @@ public class KMeans extends Configured implements Tool {
             if(this.data.length == 0) {
                 return "[]";
             }
-            String result = "@"+this.id+"[";
+            String result = "[";
             for(int i = 0; i < this.data.length - 1; i++) {
                 result += this.data[i] + ", ";
             }
