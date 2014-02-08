@@ -32,7 +32,6 @@ public class KMeans extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
         System.out.println(Arrays.toString(args));
-
         Job job = new Job(new Configuration(), "Kmeans");
         job.setJarByClass(KMeans.class);
         job.setOutputKeyClass(DoubleArrayWritable.class);
@@ -161,18 +160,19 @@ public class KMeans extends Configured implements Tool {
                 double f = Double.parseDouble(s);
                 vec.addElement(f);
             }
-            //System.out.println("Finding best centroid for point: "+vecStr(vec));
+            System.out.println("Finding best centroid for point: "+vecStr(vec));
             Double closest = Double.MAX_VALUE;
             Vector<Double> centroid = keys.get(0);
             int j = 0;
             double distSq = 0.0;
             for(Vector<Double> c : keys) {
-                //System.out.println("considering....."+c.toString());
+                System.out.println("considering....."+c.toString());
                 for(int i = 0; i < c.size(); i++) {
                     distSq += (c.get(i) - vec.get(i))*(c.get(i) - vec.get(i));
                 }
-                //System.out.println("Dist: "+distSq);
+                System.out.println("Dist: "+distSq);
                 if(distSq < closest) {
+                    System.out.println("new min!");
                     closest = distSq;
                     centroid = c;
                 }
