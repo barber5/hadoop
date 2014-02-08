@@ -344,7 +344,12 @@ public class KMeans extends Configured implements Tool {
             for(int i = 0; i < o.getData().length; i++) {
                 if(o.getData()[i] != this.getData()[i]) {
                     //System.out.println("different value");
-                    return (int)Math.round(o.getData()[i]) - (int)Math.round(this.getData()[i]);
+                    double result = o.getData()[i] - this.getData()[i];
+                    if(result > 0)
+                        return 1;
+                    else
+                        return -1;
+
                 }
             }
             //System.out.println("same");
