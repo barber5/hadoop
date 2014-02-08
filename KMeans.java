@@ -334,6 +334,7 @@ public class KMeans extends Configured implements Tool {
             //System.out.println("comparing doubleArrayWritable");
             //System.out.println("me: "+this.toString());
             //System.out.println("other: "+o.toString());
+            System.out.println("me: "+this.getData()[this.getData().length-2]+" other: "+o.getData()[o.getData().length - 2]);
             if(o.getData().length != this.getData().length) {
                 //System.out.println("different length");
                 return o.getData().length - this.getData().length;
@@ -344,7 +345,7 @@ public class KMeans extends Configured implements Tool {
                     return (int)Math.round(o.getData()[i]) - (int)Math.round(this.getData()[i]);
                 }
             }
-            //System.out.println("same");
+            System.out.println("same");
             return 0;
 
         }
