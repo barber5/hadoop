@@ -95,7 +95,7 @@ public class KMeans extends Configured implements Tool {
         }
         job.waitForCompletion(true);
 
-        /*
+
         for(int i = 0; i < 19; i++) {
             Job job2 = new Job(new Configuration(), "Kmeans");
             job2.setJarByClass(KMeans.class);
@@ -112,7 +112,7 @@ public class KMeans extends Configured implements Tool {
             FileOutputFormat.setOutputPath(job2, new Path(args[1] + i));
             job2.getConfiguration().set("centroids", args[2]+".bin");
             job2.waitForCompletion(true);
-        }*/
+        }
 
 
 
@@ -182,7 +182,7 @@ public class KMeans extends Configured implements Tool {
             cost += finalDist;
             DoubleArrayWritable v = new DoubleArrayWritable(vec);
             DoubleArrayWritable k = new DoubleArrayWritable(centroid);
-            System.out.println("With cost "+finalDist+" best centroid is "+centroid.get(centroid.size()-2));
+            //System.out.println("With cost "+finalDist+" best centroid is "+centroid.get(centroid.size()-2));
             context.write(k, v);
         }
         @Override
