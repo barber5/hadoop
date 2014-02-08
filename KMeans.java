@@ -285,7 +285,7 @@ public class KMeans extends Configured implements Tool {
         public DoubleArrayWritable() {
             this.data = new double[0];
         }
-        public DoubleArrayWritable(double[] data, int id) {
+        public DoubleArrayWritable(double[] data) {
             this.data = data;
         }
 
