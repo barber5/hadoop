@@ -160,7 +160,7 @@ public class KMeans extends Configured implements Tool {
                 double f = Double.parseDouble(s);
                 vec.addElement(f);
             }
-            System.out.println("Finding best centroid for point: "+vecStr(vec));
+            //System.out.println("Finding best centroid for point: "+vecStr(vec));
             Double closest = Double.MAX_VALUE;
             Vector<Double> centroid = keys.get(0);
             int j = 0;
