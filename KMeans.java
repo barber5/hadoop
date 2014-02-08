@@ -276,10 +276,10 @@ public class KMeans extends Configured implements Tool {
 
 
 
-    public static class Reduce extends Reducer<DoubleWritable, DoubleArrayWritable , DoubleArrayWritable, DoubleArrayWritable > {
+    public static class Reduce extends Reducer<DoubleArrayWritable, DoubleArrayWritable , DoubleArrayWritable, DoubleArrayWritable > {
         static private Vector<Vector<Double>> keys = new Vector<Vector<Double>>();
         @Override
-        public void reduce(DoubleWritable key, Iterable<DoubleArrayWritable> values, Context context)
+        public void reduce(DoubleArrayWritable key, Iterable<DoubleArrayWritable> values, Context context)
                 throws IOException, InterruptedException {
             double[] newCenter = null;
             double cost = 0.0;
