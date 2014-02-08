@@ -21,24 +21,3 @@
 
 
 
-
- 1.3491395796486366E23
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 2.6982791592949636E23
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 4.0474187389415485E23
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 5.396558318589448E23
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 6.745697898237341E23
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 8.094837477873345E23
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 9.443977057509237E23
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 1.079311663714514E24
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 1.2142256216781048E24
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 1.349139579641696E24
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 1.4840535376084433E24
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 1.6189674955752402E24
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 1.753881453542037E24
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 1.8887954115088343E24
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 2.0237093694756317E24
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 2.158623327442429E24
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 2.2935372854092266E24
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 2.4284512433760243E24
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 2.5633652013428156E24
-[ubuntu@ec2-54-193-74-71.us-west-1.compute.amazonaws.com] out: 2.6982791593096053E24
