@@ -251,12 +251,12 @@ public class KMeans extends Configured implements Tool {
             //System.out.println("me: "+this.toString());
             //System.out.println("other: "+o.toString());
             if(o.getData().length != this.getData().length) {
-                System.out.println("different length");
+                //System.out.println("different length");
                 return o.getData().length - this.getData().length;
             }
             for(int i = 0; i < o.getData().length; i++) {
                 if(o.getData()[i] != this.getData()[i]) {
-                    System.out.println("different value");
+                    //System.out.println("different value");
                     return (int)Math.round(o.getData()[i]) - (int)Math.round(this.getData()[i]);
                 }
             }
